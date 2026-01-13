@@ -1,40 +1,60 @@
 "use client";
 
-import Image from "next/image";
+import { Play, Star, Film, Clock } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative h-[85vh] w-full flex items-center pl-0 md:pl-[5vw] overflow-hidden justify-center md:justify-start text-center md:text-left pb-16 md:pb-0 items-end md:items-center">
-      <div className="absolute top-0 left-0 w-full h-full z-0">
-        <Image
-          src="/hero-bg.png"
-          alt="Artisan potter"
-          fill
-          style={{ objectFit: "cover" }}
-          priority
-        />
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-black/90 via-black/70 to-black/20 md:bg-gradient-to-r md:from-black/90 md:to-transparent"></div>
-        <div className="absolute inherit w-full h-full bg-gradient-to-t from-black via-black/60 to-transparent md:hidden"></div>
+    <header className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop" alt="Cinematic Portrait" className="w-full h-full object-cover object-center opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-zinc-950/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/90 via-zinc-950/20 to-transparent"></div>
       </div>
 
-      <div className="relative z-10 max-w-[600px] animate-[fadeIn_1s_ease-out]">
-        <div className="uppercase tracking-[2px] text-xs mb-4 text-[#b3b3b3] border-b-[3px] md:border-b-0 md:border-l-[3px] border-accent pb-2 md:pb-0 md:pl-4 inline-block md:block">
-          Now Streaming
-        </div>
-        <h1 className="text-4xl md:text-6xl leading-[1.1] mb-6 drop-shadow-md font-serif font-bold">
-          Learn from the best.<br />
-          Become your best.
-        </h1>
-        <p className="text-xl mb-8 text-[#ddd]">
-          Unlimited access to thousands of bite-sized lessons.
-        </p>
-        <button className="bg-accent text-white py-4 px-10 text-lg font-semibold rounded hover:scale-105 hover:bg-[#f00] transition-all duration-200">
-          Get UnchartedSkill
-        </button>
-        <div className="mt-4 text-sm text-[#b3b3b3]">
-          Start for $10/month (billed annually)
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-20">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="px-2 py-0.5 border border-white/20 text-[10px] uppercase tracking-widest text-white/80 rounded-sm">New Launch</span>
+            <span className="text-xs font-medium tracking-widest text-zinc-400 uppercase">Photography & Art</span>
+          </div>
+
+          <h2 className="text-lg font-medium text-zinc-400 mb-2 tracking-widest uppercase">Annie Vance</h2>
+          <h1 className="text-5xl md:text-7xl font-serif text-white leading-[0.95] tracking-tight mb-8">
+            Teaches Creative <br /> <span className="italic text-white/90">Portraiture</span>
+          </h1>
+
+          <p className="text-base md:text-lg text-zinc-300 leading-relaxed mb-10 max-w-lg font-light">
+            Join the world-renowned photographer as she breaks down her approach to lighting, composition, and capturing the human soul through the lens.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <button className="group flex items-center gap-3 bg-white text-zinc-950 px-8 py-3.5 rounded hover:bg-zinc-200 transition-all">
+              <Play strokeWidth={1.5} className="w-4 h-4 fill-zinc-950" />
+              <span className="text-sm font-medium tracking-wide">Watch Trailer</span>
+            </button>
+            <button className="flex items-center gap-3 px-8 py-3.5 rounded border border-white/20 hover:bg-white/5 transition-all text-white">
+              <span className="text-sm font-medium tracking-wide">Explore Class</span>
+            </button>
+          </div>
+
+          <div className="mt-12 flex items-center gap-8 text-zinc-500 text-xs tracking-widest uppercase">
+            <div className="flex items-center gap-2">
+              <Clock strokeWidth={1.5} className="w-4 h-4" />
+              <span>3h 15m</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Film strokeWidth={1.5} className="w-4 h-4" />
+              <span>18 Lessons</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Star strokeWidth={1.5} className="w-4 h-4 text-white" />
+              <span className="text-white">4.9/5 Rating</span>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </header>
   );
 }

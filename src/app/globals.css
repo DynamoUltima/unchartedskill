@@ -5,6 +5,7 @@
   --color-foreground: #ffffff;
   --color-accent: #e50914;
   /* Netflix/MasterClass red */
+  --color-brand-gold: #D4AF37;
   --color-card-bg: #1a1a1a;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -28,7 +29,7 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    @apply antialiased overflow-x-hidden;
+    @apply antialiased;
   }
 
   h1,
