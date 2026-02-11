@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 interface SectionItem {
     id: number;
@@ -36,7 +37,7 @@ export default function SectionGrid({ title, subtitle, items }: SectionGridProps
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {items.map((item) => (
-                    <div key={item.id} className="group relative cursor-pointer">
+                    <Link key={item.id} href="/class/portraiture-masterclass" className="group relative cursor-pointer block">
                         <div className="aspect-3/4 w-full overflow-hidden rounded-sm bg-zinc-900 relative">
                             <img
                                 src={item.image}
@@ -52,7 +53,7 @@ export default function SectionGrid({ title, subtitle, items }: SectionGridProps
                                 <h3 className="text-xl font-serif text-white leading-tight">{item.title}</h3>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </div>

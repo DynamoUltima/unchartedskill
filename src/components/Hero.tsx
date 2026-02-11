@@ -1,6 +1,7 @@
 "use client";
 
 import { Play, Star, Film, Clock } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -34,9 +35,9 @@ export default function Hero() {
               <Play strokeWidth={1.5} className="w-4 h-4 fill-zinc-950" />
               <span className="text-sm font-medium tracking-wide">Watch Trailer</span>
             </button>
-            <button className="flex items-center gap-3 px-8 py-3.5 rounded border border-white/20 hover:bg-white/5 transition-all text-white">
+            <Link href="/class/portraiture-masterclass" className="flex items-center gap-3 px-8 py-3.5 rounded border border-white/20 hover:bg-white/5 transition-all text-white">
               <span className="text-sm font-medium tracking-wide">Explore Class</span>
-            </button>
+            </Link>
           </div>
 
           <div className="mt-12 flex items-center gap-8 text-zinc-500 text-xs tracking-widest uppercase">

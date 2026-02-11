@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SectionGrid from "./SectionGrid";
 
 const TRENDING_ITEMS = [
