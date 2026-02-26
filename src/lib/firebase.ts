@@ -3,13 +3,13 @@ import { getDataConnect, connectDataConnectEmulator } from "firebase/data-connec
 import { connectorConfig } from "@dataconnect/generated";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCZyWkoY95mq05egjYnEAlMN_mG3FaGXfo",
-    authDomain: "unchartedskill-fe3f9.firebaseapp.com",
-    projectId: "unchartedskill-fe3f9",
-    storageBucket: "unchartedskill-fe3f9.firebasestorage.app",
-    messagingSenderId: "561773864681",
-    appId: "1:561773864681:web:b6383768259e4961f5b278",
-    measurementId: "G-KB4H6QH4K0"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
