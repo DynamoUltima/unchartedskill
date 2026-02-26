@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Play, Lock, CheckCircle, FileText, Users, Smartphone, Heart, MessageSquare, Pin, Image as ImageIcon, Link as LinkIcon } from "lucide-react";
 import BioModal from "./BioModal";
 
@@ -46,30 +47,32 @@ export default function ClassContent() {
                         {activeTab === "plan" && (
                             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                                 {/* Introduction Lesson */}
-                                <div className="group flex items-start gap-4 p-4 rounded-lg bg-white/5 border border-white/5 mb-2 hover:border-white/10 transition-colors cursor-pointer">
-                                    <div className="relative w-32 aspect-video bg-zinc-800 rounded overflow-hidden shrink-0">
-                                        <img
-                                            src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
-                                            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
-                                        />
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                                <Play className="w-4 h-4 text-white ml-0.5 fill-current" />
+                                <Link href="/class/1/lesson/01">
+                                    <div className="group flex items-start gap-4 p-4 rounded-lg bg-white/5 border border-white/5 mb-2 hover:border-white/10 transition-colors cursor-pointer">
+                                        <div className="relative w-32 aspect-video bg-zinc-800 rounded overflow-hidden shrink-0">
+                                            <img
+                                                src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
+                                                className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                            />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                                    <Play className="w-4 h-4 text-white ml-0.5 fill-current" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <h3 className="text-white font-medium">01. Introduction</h3>
-                                            <span className="text-xs text-zinc-500 font-mono">04:12</span>
+                                        <div className="flex-1">
+                                            <div className="flex justify-between items-start mb-1">
+                                                <h3 className="text-white font-medium">01. Introduction</h3>
+                                                <span className="text-xs text-zinc-500 font-mono">04:12</span>
+                                            </div>
+                                            <p className="text-sm text-zinc-400 line-clamp-2">
+                                                Meet Annie Vance. She shares her philosophy on why technical
+                                                perfection often kills creativity and outlines what you'll
+                                                achieve in this class.
+                                            </p>
                                         </div>
-                                        <p className="text-sm text-zinc-400 line-clamp-2">
-                                            Meet Annie Vance. She shares her philosophy on why technical
-                                            perfection often kills creativity and outlines what you'll
-                                            achieve in this class.
-                                        </p>
                                     </div>
-                                </div>
+                                </Link>
 
                                 {/* Standard Lesson List */}
                                 <div className="space-y-1">
@@ -79,7 +82,11 @@ export default function ClassContent() {
                                         { id: "04", title: "Breaking Composition Rules", desc: "Why centering isn't always boring.", time: "15:10", icon: Lock },
                                         { id: "05", title: "The Art of Direction", desc: "How to talk to your models to get genuine reactions.", time: "22:05", icon: Lock },
                                     ].map((lesson) => (
-                                        <div key={lesson.id} className="group flex items-center gap-6 p-4 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border-b border-white/5 last:border-0">
+                                        <Link
+                                            href={`/class/1/lesson/${lesson.id}`}
+                                            key={lesson.id}
+                                            className="group flex items-center gap-6 p-4 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border-b border-white/5 last:border-0"
+                                        >
                                             <span className="text-zinc-500 font-serif text-lg w-6">{lesson.id}</span>
                                             <div className="flex-1">
                                                 <h3 className="text-zinc-300 group-hover:text-white transition-colors font-medium mb-0.5">
@@ -91,7 +98,7 @@ export default function ClassContent() {
                                             </div>
                                             <span className="text-xs text-zinc-500 font-mono">{lesson.time}</span>
                                             <lesson.icon className={`w-5 h-5 ${lesson.icon === Play ? "text-zinc-600 group-hover:text-white" : "text-zinc-600"} transition-colors`} />
-                                        </div>
+                                        </Link>
                                     ))}
                                 </div>
                             </div>

@@ -2,17 +2,21 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, MonitorPlay } from "lucide-react";
 import SearchOverlay from "./SearchOverlay";
 import CategoriesMenu from "./CategoriesMenu";
 import AuthModal from "./AuthModal";
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
+  const { user, signOut } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [initialAuthView, setInitialAuthView] = useState<"login" | "signup">("login");
   const categoryButtonRef = useRef<HTMLButtonElement>(null);
+
+  console.log("Navbar Rendering with User:", user);
 
   const toggleCategories = () => {
     setIsCategoriesOpen(!isCategoriesOpen);
@@ -53,24 +57,60 @@ export default function Navbar() {
             >
               <Search strokeWidth={1.5} className="w-5 h-5" />
             </button>
-            <button
-              onClick={() => {
-                setInitialAuthView("login");
-                setIsAuthModalOpen(true);
-              }}
-              className="hidden sm:block text-sm font-medium text-zinc-300 hover:text-white transition-colors"
-            >
-              Log in
-            </button>
-            <button
-              onClick={() => {
-                setInitialAuthView("signup");
-                setIsAuthModalOpen(true);
-              }}
-              className="text-xs font-medium bg-white text-zinc-950 px-5 py-2.5 rounded hover:bg-zinc-200 transition-colors tracking-wide uppercase"
-            >
-              Sign Up
-            </button>
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/admin"
+                  className="hidden md:flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-brand-gold hover:text-white transition-colors mr-2"
+                >
+                  <MonitorPlay size={18} />
+                  TEACH
+                </Link>
+                <div className="relative group cursor-pointer">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-zinc-700">
+                    <img
+                      src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email || 'User')}&background=random`}
+                      alt="User Profile"
+                      className="w-full h-full object-cover bg-zinc-800"
+                    />
+                  </div>
+                  {/* Dropdown Menu */}
+                  <div className="absolute right-0 mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-1">
+                    <div className="px-4 py-3 border-b border-zinc-800">
+                      <p className="text-sm font-medium text-white truncate">{user.displayName || "User"}</p>
+                      <p className="text-xs text-zinc-400 truncate mt-0.5">{user.email}</p>
+                    </div>
+                    <button
+                      onClick={signOut}
+                      className="w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setInitialAuthView("login");
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="hidden sm:block text-sm font-medium text-zinc-300 hover:text-white transition-colors"
+                >
+                  Log in
+                </button>
+                <button
+                  onClick={() => {
+                    setInitialAuthView("signup");
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="hidden sm:inline-flex items-center justify-center text-xs font-medium bg-white text-zinc-950 px-5 py-2.5 rounded hover:bg-zinc-200 transition-colors tracking-wide uppercase"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
 
