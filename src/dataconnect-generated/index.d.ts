@@ -1,4 +1,4 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -54,8 +54,9 @@ export interface GetMovieByIdData {
         reviewDate: DateString;
         rating?: number | null;
         user: {
-          id: string;
-          username: string;
+          id: UUIDString;
+          firstName: string;
+          lastName: string;
         } & User_Key;
       })[];
   } & Movie_Key;
@@ -76,8 +77,9 @@ export interface ListMoviesData {
 
 export interface ListUserReviewsData {
   user?: {
-    id: string;
-    username: string;
+    id: UUIDString;
+    firstName: string;
+    lastName: string;
     reviews: ({
       rating?: number | null;
       reviewDate: DateString;
@@ -92,8 +94,9 @@ export interface ListUserReviewsData {
 
 export interface ListUsersData {
   users: ({
-    id: string;
-    username: string;
+    id: UUIDString;
+    firstName: string;
+    lastName: string;
   } & User_Key)[];
 }
 
@@ -108,7 +111,7 @@ export interface Movie_Key {
 }
 
 export interface Review_Key {
-  userId: string;
+  userId: UUIDString;
   movieId: UUIDString;
   __typename?: 'Review_Key';
 }
@@ -128,15 +131,17 @@ export interface SearchMovieVariables {
 }
 
 export interface UpsertUserData {
-  user_upsert: User_Key;
+  user_insert: User_Key;
 }
 
 export interface UpsertUserVariables {
-  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export interface User_Key {
-  id: string;
+  id: UUIDString;
   __typename?: 'User_Key';
 }
 
@@ -197,8 +202,8 @@ interface ListMoviesRef {
 }
 export const listMoviesRef: ListMoviesRef;
 
-export function listMovies(): QueryPromise<ListMoviesData, undefined>;
-export function listMovies(dc: DataConnect): QueryPromise<ListMoviesData, undefined>;
+export function listMovies(options?: ExecuteQueryOptions): QueryPromise<ListMoviesData, undefined>;
+export function listMovies(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMoviesData, undefined>;
 
 interface ListUsersRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -209,8 +214,8 @@ interface ListUsersRef {
 }
 export const listUsersRef: ListUsersRef;
 
-export function listUsers(): QueryPromise<ListUsersData, undefined>;
-export function listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
+export function listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+export function listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
 
 interface ListUserReviewsRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -221,8 +226,8 @@ interface ListUserReviewsRef {
 }
 export const listUserReviewsRef: ListUserReviewsRef;
 
-export function listUserReviews(): QueryPromise<ListUserReviewsData, undefined>;
-export function listUserReviews(dc: DataConnect): QueryPromise<ListUserReviewsData, undefined>;
+export function listUserReviews(options?: ExecuteQueryOptions): QueryPromise<ListUserReviewsData, undefined>;
+export function listUserReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUserReviewsData, undefined>;
 
 interface GetMovieByIdRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -233,8 +238,8 @@ interface GetMovieByIdRef {
 }
 export const getMovieByIdRef: GetMovieByIdRef;
 
-export function getMovieById(vars: GetMovieByIdVariables): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
-export function getMovieById(dc: DataConnect, vars: GetMovieByIdVariables): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
+export function getMovieById(vars: GetMovieByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
+export function getMovieById(dc: DataConnect, vars: GetMovieByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetMovieByIdData, GetMovieByIdVariables>;
 
 interface SearchMovieRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -245,6 +250,6 @@ interface SearchMovieRef {
 }
 export const searchMovieRef: SearchMovieRef;
 
-export function searchMovie(vars?: SearchMovieVariables): QueryPromise<SearchMovieData, SearchMovieVariables>;
-export function searchMovie(dc: DataConnect, vars?: SearchMovieVariables): QueryPromise<SearchMovieData, SearchMovieVariables>;
+export function searchMovie(vars?: SearchMovieVariables, options?: ExecuteQueryOptions): QueryPromise<SearchMovieData, SearchMovieVariables>;
+export function searchMovie(dc: DataConnect, vars?: SearchMovieVariables, options?: ExecuteQueryOptions): QueryPromise<SearchMovieData, SearchMovieVariables>;
 

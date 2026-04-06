@@ -1,13 +1,13 @@
 specVersion: "v1"
-serviceId: "uncharted"
-location: "us-central1"
+serviceId: "unchartedskill-fe3f9-service"
+location: "us-east4"
 schema:
   source: "./schema"
   datasource:
     postgresql:
-      database: "fdcdb"
+      database: "unchartedskill-fe3f9-database"
       cloudSql:
-        instanceId: "uncharted-fdc"
+        instanceId: "unchartedskill-fe3f9-instance"
         # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
-        # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+        schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
 connectorDirs: ["./example"]

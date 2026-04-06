@@ -6,10 +6,10 @@ mutation CreateMovie($title: String!, $genre: String!, $imageUrl: String!)
   movie_insert(data: { title: $title, genre: $genre, imageUrl: $imageUrl })
 }
 
-# Upsert (update or insert) a user's username based on their auth.uid
-mutation UpsertUser($username: String!) @auth(level: USER) {
+# Upsert (update or insert) a user based on their auth.uid
+mutation UpsertUser($firstName: String!, $lastName: String!, $email: String!) @auth(level: USER) {
   # The "auth.uid" server value ensures that users can only register their own user.
-  user_upsert(data: { id_expr: "auth.uid", username: $username })
+  user_insert(data: { authUid_expr: "auth.uid", firstName: $firstName, lastName: $lastName, email: $email })
 }
 
 # Add a review for a movie

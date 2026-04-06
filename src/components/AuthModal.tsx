@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { X, ArrowRight, UserPlus, Check, CheckCircle, ArrowLeft, CreditCard } from "lucide-react";
 
 import { useAuth } from '@/context/AuthContext';
+import { upsertUser } from '@dataconnect/generated';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -13,15 +14,54 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose, initialView = "login" }: AuthModalProps) {
-    const { signInWithGoogle } = useAuth();
+    const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
     const [view, setView] = useState<"login" | "signup">(initialView);
     const [mounted, setMounted] = useState(false);
     const [signupStep, setSignupStep] = useState(1);
     const [selectedPlan, setSelectedPlan] = useState<"annual" | "monthly">("annual");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+
+    const [errorMsg, setErrorMsg] = useState("");
 
     const handleGoogleAuth = async () => {
-        await signInWithGoogle();
-        onClose(); // Close the modal upon successful navigation/auth trigger
+        try {
+            await signInWithGoogle();
+            onClose(); // Close the modal upon successful navigation/auth trigger
+        } catch (error) {
+            setErrorMsg("Google sign in failed. Please try again.");
+        }
+    };
+
+    const handleLoginSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMsg("");
+        try {
+            await signInWithEmail(email, password);
+            onClose();
+        } catch (error: any) {
+            setErrorMsg(error.message || "Login failed");
+        }
+    };
+
+    const handleSignupSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMsg("");
+        try {
+            // 1. Create user in Firebase Auth
+            const fullName = `${firstName} ${lastName}`.trim();
+            await signUpWithEmail(email, password, fullName);
+
+            // 2. Insert User into Data Connect Database
+            await upsertUser({ firstName, lastName, email });
+
+            // 3. Move to next step
+            setSignupStep(2);
+        } catch (error: any) {
+            setErrorMsg(error.message || "Signup failed");
+        }
     };
 
     useEffect(() => {
@@ -92,14 +132,18 @@ export default function AuthModal({ isOpen, onClose, initialView = "login" }: Au
                         <div className="mb-10 text-center">
                             <h2 className="text-3xl font-serif text-white mb-3">Welcome back</h2>
                             <p className="text-zinc-400 text-sm leading-relaxed">Enter your details to access your learning journey.</p>
+                            {errorMsg && <p className="text-red-500 text-sm mt-2">{errorMsg}</p>}
                         </div>
 
-                        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onClose(); }}>
+                        <form className="space-y-6" onSubmit={handleLoginSubmit}>
                             <div className="space-y-5">
                                 <div className="space-y-1.5">
                                     <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest">Email</label>
                                     <input
                                         type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
                                         className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all"
                                         placeholder="name@example.com"
                                     />
@@ -111,6 +155,9 @@ export default function AuthModal({ isOpen, onClose, initialView = "login" }: Au
                                     </div>
                                     <input
                                         type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
                                         className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all"
                                         placeholder="••••••••"
                                     />
@@ -237,6 +284,7 @@ export default function AuthModal({ isOpen, onClose, initialView = "login" }: Au
                                 <div className="mb-8">
                                     <h2 className="text-3xl font-serif text-white mb-2">Create your account</h2>
                                     <p className="text-zinc-400 text-sm">Join millions of learners around the world.</p>
+                                    {errorMsg && <p className="text-red-500 text-sm mt-2">{errorMsg}</p>}
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 mb-6">
@@ -262,24 +310,24 @@ export default function AuthModal({ isOpen, onClose, initialView = "login" }: Au
                                     <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-medium"><span className="bg-zinc-950 px-4 text-zinc-500">Or with email</span></div>
                                 </div>
 
-                                <form onSubmit={(e) => { e.preventDefault(); setSignupStep(2); }} className="space-y-4">
+                                <form onSubmit={handleSignupSubmit} className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest">First Name</label>
-                                            <input type="text" className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Jane" required />
+                                            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Jane" required />
                                         </div>
                                         <div className="space-y-1.5">
                                             <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest">Last Name</label>
-                                            <input type="text" className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Doe" required />
+                                            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Doe" required />
                                         </div>
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest">Email</label>
-                                        <input type="email" className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="name@example.com" required />
+                                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="name@example.com" required />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest">Password</label>
-                                        <input type="password" className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Create a password" required />
+                                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-zinc-900 border border-zinc-800 rounded px-4 py-3 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Create a password" required />
                                     </div>
 
                                     <button
@@ -362,13 +410,21 @@ export default function AuthModal({ isOpen, onClose, initialView = "login" }: Au
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={onClose}
-                                    className="w-full bg-brand-gold text-zinc-950 font-semibold py-3.5 rounded hover:bg-white transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                                >
-                                    <CreditCard className="w-5 h-5" />
-                                    <span>Start Membership</span>
-                                </button>
+                                <div className="flex flex-col gap-3">
+                                    <button
+                                        onClick={onClose}
+                                        className="w-full bg-brand-gold text-zinc-950 font-semibold py-3.5 rounded hover:bg-white transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                                    >
+                                        <CreditCard className="w-5 h-5" />
+                                        <span>Start Membership</span>
+                                    </button>
+                                    <button
+                                        onClick={onClose}
+                                        className="w-full bg-zinc-800 text-white font-semibold py-3.5 rounded hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                                    >
+                                        <span>Skip for now</span>
+                                    </button>
+                                </div>
                                 <p className="text-center text-[10px] text-zinc-600 mt-4 leading-relaxed">
                                     By confirming, you agree to our Terms of Service. Your subscription will renew automatically. You can cancel at any time.
                                 </p>

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { Search, ChevronDown, MonitorPlay } from "lucide-react";
+import { Search, ChevronDown, MonitorPlay, History } from "lucide-react";
 import SearchOverlay from "./SearchOverlay";
 import CategoriesMenu from "./CategoriesMenu";
 import AuthModal from "./AuthModal";
@@ -28,7 +28,7 @@ export default function Navbar() {
         <div className="relative max-w-7xl mx-auto px-6 h-20 flex items-center justify-between z-50">
           {/* Logo */}
           <div className="flex items-center gap-12">
-            <Link href="#" className="text-2xl font-serif text-white tracking-tighter hover:opacity-80 transition-opacity">
+            <Link href="/" className="text-2xl font-serif text-white tracking-tighter hover:opacity-80 transition-opacity">
               UnchartedSkill
             </Link>
 
@@ -51,6 +51,13 @@ export default function Navbar() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-6">
+            <Link
+              href="/my-learning"
+              className="hidden md:flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
+            >
+              <History size={16} />
+              My Learning
+            </Link>
             <button
               onClick={() => setIsSearchOpen(true)}
               className="text-zinc-400 hover:text-white transition-colors"

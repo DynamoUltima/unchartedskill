@@ -214,8 +214,9 @@ To access the data returned by a Query, use the `UseQueryResult.data` field. The
 ```javascript
 export interface ListUsersData {
   users: ({
-    id: string;
-    username: string;
+    id: UUIDString;
+    firstName: string;
+    lastName: string;
   } & User_Key)[];
 }
 ```
@@ -286,8 +287,9 @@ To access the data returned by a Query, use the `UseQueryResult.data` field. The
 ```javascript
 export interface ListUserReviewsData {
   user?: {
-    id: string;
-    username: string;
+    id: UUIDString;
+    firstName: string;
+    lastName: string;
     reviews: ({
       rating?: number | null;
       reviewDate: DateString;
@@ -387,8 +389,9 @@ export interface GetMovieByIdData {
         reviewDate: DateString;
         rating?: number | null;
         user: {
-          id: string;
-          username: string;
+          id: UUIDString;
+          firstName: string;
+          lastName: string;
         } & User_Key;
       })[];
   } & Movie_Key;
@@ -679,7 +682,9 @@ The `UpsertUser` Mutation requires an argument of type `UpsertUserVariables`, wh
 
 ```javascript
 export interface UpsertUserVariables {
-  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 ```
 ### Return Type
@@ -692,7 +697,7 @@ To execute the Mutation, call `UseMutationResult.mutate()`. This function execut
 To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `UpsertUser` Mutation is of type `UpsertUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface UpsertUserData {
-  user_upsert: User_Key;
+  user_insert: User_Key;
 }
 ```
 
@@ -729,11 +734,13 @@ export default function UpsertUserComponent() {
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
   // The `useUpsertUser` Mutation requires an argument of type `UpsertUserVariables`:
   const upsertUserVars: UpsertUserVariables = {
-    username: ..., 
+    firstName: ..., 
+    lastName: ..., 
+    email: ..., 
   };
   mutation.mutate(upsertUserVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ username: ..., });
+  mutation.mutate({ firstName: ..., lastName: ..., email: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -752,7 +759,7 @@ export default function UpsertUserComponent() {
 
   // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
   if (mutation.isSuccess) {
-    console.log(mutation.data.user_upsert);
+    console.log(mutation.data.user_insert);
   }
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }

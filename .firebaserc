@@ -1,5 +1,7 @@
 {
-  "projects": {},
+  "projects": {
+    "default": "unchartedskill-fe3f9"
+  },
   "targets": {},
   "etags": {}
 }

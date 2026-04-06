@@ -25,11 +25,26 @@ import {
     FileDown,
     ArrowRightLeft,
     Image as ImageIcon,
-    MonitorPlay
+    MonitorPlay,
+    Mail,
+    Search,
+    MoreHorizontal,
+    X,
+    CheckCircle,
+    Play,
 } from "lucide-react";
 
+const students = [
+    { id: 1, initials: "JD", name: "John Doe", email: "john.doe@example.com", course: "Creative Portraiture", enrolledDate: "Enrolled Oct 12", progress: 60, lastActive: "2 hrs ago", avatarColor: "bg-blue-500/20 text-blue-300", ringColor: "ring-blue-500/30" },
+    { id: 2, initials: "SM", name: "Sarah Miller", email: "sarah.m@example.com", course: "Storytelling Masterclass", enrolledDate: "Enrolled Oct 10", progress: 100, lastActive: "1 day ago", avatarColor: "bg-pink-500/20 text-pink-300", ringColor: "ring-pink-500/30" },
+    { id: 3, initials: "MK", name: "Mike Kinsley", email: "mike.k@example.com", course: "Creative Portraiture", enrolledDate: "Enrolled Oct 08", progress: 25, lastActive: "3 days ago", avatarColor: "bg-orange-500/20 text-orange-300", ringColor: "ring-orange-500/30" },
+    { id: 4, initials: "AL", name: "Aisha Lee", email: "aisha.l@example.com", course: "Creative Portraiture", enrolledDate: "Enrolled Oct 05", progress: 80, lastActive: "5 hrs ago", avatarColor: "bg-purple-500/20 text-purple-300", ringColor: "ring-purple-500/30" },
+    { id: 5, initials: "RJ", name: "Ryan James", email: "ryan.j@example.com", course: "Storytelling Masterclass", enrolledDate: "Enrolled Sep 28", progress: 45, lastActive: "1 week ago", avatarColor: "bg-green-500/20 text-green-300", ringColor: "ring-green-500/30" },
+];
+
 export default function AdminPage() {
-    const [activeTab, setActiveTab] = useState<"dashboard" | "curriculum" | "earnings">("dashboard");
+    const [activeTab, setActiveTab] = useState<"dashboard" | "curriculum" | "earnings" | "students">("dashboard");
+    const [showStudentDrawer, setShowStudentDrawer] = useState(false);
 
     return (
         <div className="h-screen bg-zinc-950 flex overflow-hidden">
@@ -68,7 +83,10 @@ export default function AdminPage() {
                             <Wallet size={18} />
                             Earnings
                         </button>
-                        <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium text-zinc-400 hover:bg-white/5 hover:text-white transition-colors">
+                        <button
+                            onClick={() => setActiveTab("students")}
+                            className={"w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium transition-colors " + (activeTab === "students" ? "bg-white/10 text-white" : "text-zinc-400 hover:bg-white/5 hover:text-white")}
+                        >
                             <Users size={18} />
                             Students
                         </button>
@@ -861,8 +879,256 @@ export default function AdminPage() {
                             </div>
                         </div>
                     )}
+
+                    {/* STUDENTS TAB */}
+                    {activeTab === "students" && (
+                        <div className="space-y-8 animate-in fade-in duration-500">
+                            {/* Header */}
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-2xl font-serif text-white tracking-tight">Students</h2>
+                                    <p className="text-zinc-500 text-sm mt-1">Manage and monitor your enrolled students&apos; progress.</p>
+                                </div>
+                                <button className="bg-white text-zinc-950 px-4 py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition-colors flex items-center gap-2">
+                                    <Mail size={16} />
+                                    Message All
+                                </button>
+                            </div>
+
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="p-5 rounded-xl border border-white/5 bg-zinc-900/50">
+                                    <div className="text-xs text-zinc-500 font-medium uppercase tracking-widest mb-2">Total Students</div>
+                                    <div className="text-3xl font-serif text-white mb-1">24,532</div>
+                                    <div className="text-xs text-green-400 font-medium">+12% this month</div>
+                                </div>
+                                <div className="p-5 rounded-xl border border-white/5 bg-zinc-900/50">
+                                    <div className="text-xs text-zinc-500 font-medium uppercase tracking-widest mb-2">Active (7d)</div>
+                                    <div className="text-3xl font-serif text-white mb-1">8,401</div>
+                                    <div className="text-xs text-zinc-400 font-medium">34% of total</div>
+                                </div>
+                                <div className="p-5 rounded-xl border border-white/5 bg-zinc-900/50">
+                                    <div className="text-xs text-zinc-500 font-medium uppercase tracking-widest mb-2">Avg Progress</div>
+                                    <div className="text-3xl font-serif text-white mb-1">42%</div>
+                                    <div className="text-xs text-green-400 font-medium">+5% vs last month</div>
+                                </div>
+                                <div className="p-5 rounded-xl border border-white/5 bg-zinc-900/50">
+                                    <div className="text-xs text-zinc-500 font-medium uppercase tracking-widest mb-2">Completion Rate</div>
+                                    <div className="text-3xl font-serif text-white mb-1">18%</div>
+                                    <div className="text-xs text-zinc-400 font-medium">Across all courses</div>
+                                </div>
+                            </div>
+
+                            {/* Search & Filters */}
+                            <div className="flex flex-col md:flex-row items-center gap-4">
+                                <div className="relative flex-1 w-full">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search students by name or email..."
+                                        className="w-full bg-zinc-900/50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/30 transition-colors"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3 w-full md:w-auto">
+                                    <select className="bg-zinc-900/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-white/30 transition-colors cursor-pointer w-full md:w-auto">
+                                        <option>All Courses</option>
+                                        <option>Creative Portraiture</option>
+                                        <option>Storytelling Masterclass</option>
+                                    </select>
+                                    <select className="bg-zinc-900/50 border border-white/10 rounded-lg px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-white/30 transition-colors cursor-pointer w-full md:w-auto">
+                                        <option>Any Status</option>
+                                        <option>Active</option>
+                                        <option>Inactive</option>
+                                        <option>Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Students Table */}
+                            <div className="rounded-xl border border-white/5 bg-zinc-900/30 overflow-hidden">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-white/5 text-zinc-400 font-medium text-xs uppercase tracking-wider border-b border-white/5">
+                                        <tr>
+                                            <th className="px-6 py-4 font-medium">Student</th>
+                                            <th className="px-6 py-4 font-medium">Enrolled Course</th>
+                                            <th className="px-6 py-4 font-medium">Progress</th>
+                                            <th className="px-6 py-4 font-medium hidden md:table-cell">Last Active</th>
+                                            <th className="px-6 py-4 font-medium text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5 text-zinc-300">
+                                        {students.map((student) => (
+                                            <tr
+                                                key={student.id}
+                                                className="hover:bg-white/5 transition-colors cursor-pointer group"
+                                                onClick={() => setShowStudentDrawer(true)}
+                                            >
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={"w-8 h-8 rounded-full " + student.avatarColor + " flex items-center justify-center text-xs font-bold shrink-0 ring-1 " + student.ringColor}>
+                                                            {student.initials}
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-medium text-white group-hover:text-brand-gold transition-colors">{student.name}</div>
+                                                            <div className="text-xs text-zinc-500">{student.email}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div>{student.course}</div>
+                                                    <div className="text-xs text-zinc-500">{student.enrolledDate}</div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-16 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                                                            <div className="h-full bg-brand-gold rounded-full" style={{ width: student.progress + "%" }}></div>
+                                                        </div>
+                                                        <span className="text-xs font-medium text-zinc-400">{student.progress}%</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 hidden md:table-cell text-zinc-500">{student.lastActive}</td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button
+                                                        className="text-zinc-500 hover:text-white transition-colors"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <MoreHorizontal size={18} />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                {/* Pagination */}
+                                <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between">
+                                    <div className="text-xs text-zinc-500">Showing 1 to 5 of 24,532 students</div>
+                                    <div className="flex items-center gap-2">
+                                        <button className="px-3 py-1.5 rounded text-xs font-medium text-zinc-400 bg-zinc-800/50 hover:bg-zinc-800 hover:text-white transition-colors opacity-50 cursor-not-allowed" disabled>
+                                            Previous
+                                        </button>
+                                        <button className="px-3 py-1.5 rounded text-xs font-medium text-zinc-400 bg-zinc-800/50 hover:bg-zinc-800 hover:text-white transition-colors">
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </main>
+
+            {/* Student Details Drawer */}
+            <div
+                className={"fixed inset-0 z-50 transition-all duration-300 " + (showStudentDrawer ? "pointer-events-auto" : "pointer-events-none")}
+            >
+                {/* Backdrop */}
+                <div
+                    className={"absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out " + (showStudentDrawer ? "opacity-100" : "opacity-0")}
+                    onClick={() => setShowStudentDrawer(false)}
+                />
+                {/* Drawer Panel */}
+                <div className={"absolute inset-y-0 right-0 w-full max-w-md bg-zinc-950 border-l border-white/5 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out " + (showStudentDrawer ? "translate-x-0" : "translate-x-full")}>
+                        {/* Drawer Header */}
+                        <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-zinc-900/50 shrink-0">
+                            <h3 className="text-lg font-serif text-white tracking-tight">Student Profile</h3>
+                            <button
+                                onClick={() => setShowStudentDrawer(false)}
+                                className="text-zinc-500 hover:text-white transition-colors"
+                            >
+                                <X size={22} />
+                            </button>
+                        </div>
+
+                        {/* Drawer Body */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                            {/* Profile Info */}
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-full bg-blue-500/20 text-blue-300 flex items-center justify-center text-xl font-bold ring-1 ring-blue-500/30 shrink-0">
+                                    JD
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-semibold text-white mb-0.5 tracking-tight">John Doe</h2>
+                                    <p className="text-sm text-zinc-400 mb-2">john.doe@example.com</p>
+                                    <span className="px-2.5 py-1 rounded bg-green-500/10 text-green-400 text-[10px] font-bold uppercase tracking-wider border border-green-500/20">
+                                        Active Student
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Quick Actions */}
+                            <div className="flex items-center gap-3 pb-6 border-b border-white/5">
+                                <button className="flex-1 bg-white text-zinc-950 px-4 py-2.5 rounded text-xs font-bold uppercase tracking-wide hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2">
+                                    <Mail size={14} />
+                                    Message
+                                </button>
+                                <button className="flex-1 border border-white/10 text-white px-4 py-2.5 rounded text-xs font-bold uppercase tracking-wide hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
+                                    <TrendingUp size={14} />
+                                    Report
+                                </button>
+                                <button className="w-10 h-10 border border-white/10 text-zinc-400 rounded flex items-center justify-center hover:bg-white/5 hover:text-red-400 transition-colors shrink-0">
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+
+                            {/* Enrolled Courses */}
+                            <div>
+                                <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Enrolled Courses</h4>
+                                <div className="space-y-4">
+                                    <div className="p-5 rounded-xl border border-white/5 bg-zinc-900/30">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <h5 className="text-sm font-semibold text-white mb-1">Creative Portraiture</h5>
+                                                <p className="text-[10px] uppercase tracking-wider text-zinc-500">Enrolled Oct 12, 2023</p>
+                                            </div>
+                                            <span className="text-xs font-bold text-zinc-400">60%</span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-4">
+                                            <div className="h-full bg-brand-gold w-[60%] rounded-full"></div>
+                                        </div>
+                                        <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
+                                            <span className="flex items-center gap-1.5">
+                                                <MonitorPlay size={12} />
+                                                11/18 Lessons
+                                            </span>
+                                            <span className="flex items-center gap-1.5">
+                                                <Clock size={12} />
+                                                2 hrs ago
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Activity Log */}
+                            <div>
+                                <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Recent Activity</h4>
+                                <div className="space-y-5 relative before:absolute before:inset-y-0 before:left-[11px] before:w-px before:bg-white/5 ml-2">
+                                    <div className="relative pl-8">
+                                        <div className="absolute left-0 top-1 w-6 h-6 -translate-x-1/2 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-zinc-400">
+                                            <CheckCircle size={12} />
+                                        </div>
+                                        <p className="text-sm text-zinc-300 font-medium">Completed: Finding Your Subject</p>
+                                        <span className="text-xs text-zinc-500 font-medium mt-0.5 block">Today, 2:30 PM</span>
+                                    </div>
+                                    <div className="relative pl-8">
+                                        <div className="absolute left-0 top-1 w-6 h-6 -translate-x-1/2 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-zinc-400">
+                                            <Play size={10} className="ml-0.5" />
+                                        </div>
+                                        <p className="text-sm text-zinc-300 font-medium">Started: Finding Your Subject</p>
+                                        <span className="text-xs text-zinc-500 font-medium mt-0.5 block">Today, 2:15 PM</span>
+                                    </div>
+                                    <div className="relative pl-8">
+                                        <div className="absolute left-0 top-1 w-6 h-6 -translate-x-1/2 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-gold/80">
+                                            <Star size={12} />
+                                        </div>
+                                        <p className="text-sm text-zinc-300 font-medium">Enrolled in Creative Portraiture</p>
+                                        <span className="text-xs text-zinc-500 font-medium mt-0.5 block">Oct 12, 2023</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
         </div>
     );
 }

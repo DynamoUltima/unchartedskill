@@ -15,7 +15,8 @@ query ListMovies @auth(level: PUBLIC, insecureReason: "Anyone can list all movie
 query ListUsers @auth(level: NO_ACCESS) {
   users {
     id
-    username
+    firstName
+    lastName
   }
 }
 
@@ -24,7 +25,8 @@ query ListUsers @auth(level: NO_ACCESS) {
 query ListUserReviews @auth(level: USER) {
   user(key: { id_expr: "auth.uid" }) {
     id
-    username
+    firstName
+    lastName
     # <field>_on_<foreign_key_field> makes it easy to grab info from another table
     # Here, we use it to grab all the reviews written by the user.
     reviews: reviews_on_user {
@@ -57,7 +59,8 @@ query GetMovieById($id: UUID!) @auth(level: PUBLIC, insecureReason: "Anyone can 
       rating
       user {
         id
-        username
+        firstName
+        lastName
       }
     }
   }

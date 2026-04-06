@@ -68,7 +68,8 @@ export default function CategoriesMenu({ isOpen, onClose, triggerRef }: Categori
                         {["Filmmaking", "Acting", "Photography", "Writing", "Music & Audio"].map((item) => (
                             <li key={item}>
                                 <Link
-                                    href="#"
+                                    href="/category"
+                                    onClick={onClose}
                                     className="flex items-center justify-between text-sm text-zinc-400 hover:text-white hover:pl-2 transition-all duration-200 group"
                                 >
                                     <span>{item}</span>
@@ -91,7 +92,8 @@ export default function CategoriesMenu({ isOpen, onClose, triggerRef }: Categori
                         {["Leadership", "Entrepreneurship", "Marketing", "Science & Tech"].map((item) => (
                             <li key={item}>
                                 <Link
-                                    href="#"
+                                    href="/category"
+                                    onClick={onClose}
                                     className="flex items-center justify-between text-sm text-zinc-400 hover:text-white hover:pl-2 transition-all duration-200 group"
                                 >
                                     <span>{item}</span>
@@ -114,7 +116,8 @@ export default function CategoriesMenu({ isOpen, onClose, triggerRef }: Categori
                         {["Culinary Arts", "Design & Style", "Sports & Games", "Wellness"].map((item) => (
                             <li key={item}>
                                 <Link
-                                    href="#"
+                                    href="/category"
+                                    onClick={onClose}
                                     className="flex items-center justify-between text-sm text-zinc-400 hover:text-white hover:pl-2 transition-all duration-200 group"
                                 >
                                     <span>{item}</span>
@@ -153,8 +156,9 @@ export default function CategoriesMenu({ isOpen, onClose, triggerRef }: Categori
             <div className="bg-zinc-900/50 border-t border-white/5 py-3 px-6">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <Link
-                        href="#"
+                        href="/categories"
                         className="text-xs font-medium text-zinc-500 hover:text-white uppercase tracking-wider transition-colors flex items-center gap-2"
+                        onClick={onClose}
                     >
                         <Compass strokeWidth={1.5} className="w-4 h-4" />
                         View All Categories
