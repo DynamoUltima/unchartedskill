@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
     LayoutDashboard,
@@ -32,7 +32,14 @@ import {
     X,
     CheckCircle,
     Play,
+    Save,
+    Loader2,
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { storage } from "../../lib/firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getCurrentUser, updateUserProfile, updateUserNotifications } from "@dataconnect/generated";
 
 const students = [
     { id: 1, initials: "JD", name: "John Doe", email: "john.doe@example.com", course: "Creative Portraiture", enrolledDate: "Enrolled Oct 12", progress: 60, lastActive: "2 hrs ago", avatarColor: "bg-blue-500/20 text-blue-300", ringColor: "ring-blue-500/30" },
@@ -43,8 +50,117 @@ const students = [
 ];
 
 export default function AdminPage() {
-    const [activeTab, setActiveTab] = useState<"dashboard" | "curriculum" | "earnings" | "students">("dashboard");
+    const { user: firebaseUser } = useAuth();
+    const [activeTab, setActiveTab] = useState<"dashboard" | "curriculum" | "earnings" | "students" | "settings">("dashboard");
+    const [settingsTab, setSettingsTab] = useState<"profile" | "security" | "notifications">("profile");
     const [showStudentDrawer, setShowStudentDrawer] = useState(false);
+
+    // Profile state
+    const [userId, setUserId] = useState<string | null>(null);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [headline, setHeadline] = useState("");
+    const [bio, setBio] = useState("");
+    const [website, setWebsite] = useState("");
+    const [twitterUrl, setTwitterUrl] = useState("");
+    const [instagramUrl, setInstagramUrl] = useState("");
+    const [linkedinUrl, setLinkedinUrl] = useState("");
+    const [profileEmail, setProfileEmail] = useState("");
+    const [joinedDate, setJoinedDate] = useState("");
+    const [photoUrl, setPhotoUrl] = useState("");
+    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+    const [profileSaving, setProfileSaving] = useState(false);
+    const [profileSaved, setProfileSaved] = useState(false);
+
+    // Notification state
+    const [notifyEnrollments, setNotifyEnrollments] = useState(true);
+    const [notifyQuestions, setNotifyQuestions] = useState(true);
+    const [notifyMarketing, setNotifyMarketing] = useState(false);
+    const [notifSaving, setNotifSaving] = useState(false);
+
+    // Security state
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [securityMsg, setSecurityMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+    const [securitySaving, setSecuritySaving] = useState(false);
+
+    // Load user profile from DataConnect on mount
+    useEffect(() => {
+        if (!firebaseUser) return;
+        getCurrentUser({ authUid: firebaseUser.uid }).then((res) => {
+            const profile = res.data.users[0];
+            if (!profile) return;
+            setUserId(profile.id);
+            setFirstName(profile.firstName);
+            setLastName(profile.lastName);
+            setHeadline(profile.headline ?? "");
+            setBio(profile.bio ?? "");
+            setWebsite(profile.website ?? "");
+            setTwitterUrl(profile.twitterUrl ?? "");
+            setInstagramUrl(profile.instagramUrl ?? "");
+            setLinkedinUrl(profile.linkedinUrl ?? "");
+            setProfileEmail(profile.email);
+            setNotifyEnrollments(profile.notifyEnrollments);
+            setNotifyQuestions(profile.notifyQuestions);
+            setNotifyMarketing(profile.notifyMarketing);
+            setPhotoUrl(profile.photoUrl ?? "");
+            if (profile.createdAt) {
+                setJoinedDate(new Date(profile.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }));
+            }
+        }).catch(console.error);
+    }, [firebaseUser]);
+
+    const handleSaveProfile = async () => {
+        if (!userId) return;
+        setProfileSaving(true);
+        try {
+            await updateUserProfile({ id: userId, firstName, lastName, headline, bio, website, twitterUrl, instagramUrl, linkedinUrl, photoUrl });
+            setProfileSaved(true);
+            setTimeout(() => setProfileSaved(false), 3000);
+        } catch (e) { console.error(e); }
+        finally { setProfileSaving(false); }
+    };
+
+    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !firebaseUser || !userId) return;
+        const storageRef = ref(storage, `profile-pictures/${firebaseUser.uid}`);
+        const task = uploadBytesResumable(storageRef, file);
+        task.on("state_changed",
+            (snap) => setUploadProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
+            (err) => { console.error(err); setUploadProgress(null); },
+            async () => {
+                const url = await getDownloadURL(task.snapshot.ref);
+                setPhotoUrl(url);
+                setUploadProgress(null);
+                await updateUserProfile({ id: userId, firstName, lastName, headline, bio, website, twitterUrl, instagramUrl, linkedinUrl, photoUrl: url });
+            }
+        );
+    };
+
+    const handleSaveNotifications = async () => {
+        if (!userId) return;
+        setNotifSaving(true);
+        try { await updateUserNotifications({ id: userId, notifyEnrollments, notifyQuestions, notifyMarketing }); }
+        catch (e) { console.error(e); }
+        finally { setNotifSaving(false); }
+    };
+
+    const handleChangePassword = async () => {
+        if (!firebaseUser?.email || !currentPassword || !newPassword) return;
+        setSecuritySaving(true);
+        setSecurityMsg(null);
+        try {
+            const credential = EmailAuthProvider.credential(firebaseUser.email, currentPassword);
+            await reauthenticateWithCredential(firebaseUser, credential);
+            await updatePassword(firebaseUser, newPassword);
+            setSecurityMsg({ type: "success", text: "Password updated successfully." });
+            setCurrentPassword("");
+            setNewPassword("");
+        } catch (e: any) {
+            setSecurityMsg({ type: "error", text: e.message ?? "Failed to update password." });
+        } finally { setSecuritySaving(false); }
+    };
 
     return (
         <div className="h-screen bg-zinc-950 flex overflow-hidden">
@@ -90,7 +206,11 @@ export default function AdminPage() {
                             <Users size={18} />
                             Students
                         </button>
-                        <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium text-zinc-400 hover:bg-white/5 hover:text-white transition-colors">
+                        <button 
+                            onClick={() => setActiveTab("settings")}
+                            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-medium transition-colors ${activeTab === "settings" ? "bg-white/10 text-white" : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                                }`}
+                        >
                             <Settings size={18} />
                             Settings
                         </button>
@@ -1014,6 +1134,311 @@ export default function AdminPage() {
                             </div>
                         </div>
                     )}
+                    {/* SETTINGS TAB */}
+                    {activeTab === "settings" && (
+                        <div className="space-y-8 animate-in fade-in duration-500">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-2xl font-serif text-white tracking-tight">
+                                        Account Settings
+                                    </h2>
+                                    <p className="text-zinc-500 text-sm mt-1">
+                                        Manage your public profile, notification preferences, and security.
+                                    </p>
+                                </div>
+                                <div className="flex gap-3">
+                                    {profileSaved && <span className="text-xs text-green-400 flex items-center gap-1.5"><CheckCircle size={14}/> Saved</span>}
+                                    {settingsTab === "profile" && (
+                                        <button onClick={handleSaveProfile} disabled={profileSaving || !userId} className="flex items-center gap-2 bg-white text-zinc-950 px-4 py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition-colors disabled:opacity-50">
+                                            {profileSaving ? <Loader2 size={14} className="animate-spin"/> : <Save size={14}/>} Save Changes
+                                        </button>
+                                    )}
+                                    {settingsTab === "notifications" && (
+                                        <button onClick={handleSaveNotifications} disabled={notifSaving || !userId} className="flex items-center gap-2 bg-white text-zinc-950 px-4 py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition-colors disabled:opacity-50">
+                                            {notifSaving ? <Loader2 size={14} className="animate-spin"/> : <Save size={14}/>} Save Preferences
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Settings Navigation */}
+                            <div className="flex items-center gap-6 border-b border-white/5 px-2">
+                                <button
+                                    onClick={() => setSettingsTab("profile")}
+                                    className={`py-3 text-sm font-medium transition-colors relative ${settingsTab === "profile" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                                >
+                                    Public Profile
+                                    {settingsTab === "profile" && (
+                                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-gold rounded-t-full"></div>
+                                    )}
+                                </button>
+                                <button
+                                    onClick={() => setSettingsTab("security")}
+                                    className={`py-3 text-sm font-medium transition-colors relative ${settingsTab === "security" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                                >
+                                    Security
+                                    {settingsTab === "security" && (
+                                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-gold rounded-t-full"></div>
+                                    )}
+                                </button>
+                                <button
+                                    onClick={() => setSettingsTab("notifications")}
+                                    className={`py-3 text-sm font-medium transition-colors relative ${settingsTab === "notifications" ? "text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                                >
+                                    Notifications
+                                    {settingsTab === "notifications" && (
+                                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-gold rounded-t-full"></div>
+                                    )}
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                {/* Main Settings Content */}
+                                <div className="lg:col-span-2 space-y-6">
+                                    {settingsTab === "profile" && (
+                                        <div className="p-6 rounded-xl border border-white/5 bg-zinc-900/30 space-y-6 animate-in fade-in duration-300">
+                                            <div>
+                                                <h3 className="text-white font-medium text-sm mb-4">Profile Picture</h3>
+                                                <div className="flex items-center gap-6">
+                                                     {/* Hidden file input */}
+                                                     <input
+                                                        id="photo-upload-input"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={handlePhotoUpload}
+                                                    />
+                                                    <div className="relative">
+                                                        <img
+                                                            src={photoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(firstName + " " + lastName)}&background=3f3f46&color=d4af37&size=128`}
+                                                            alt="Profile"
+                                                            className="w-20 h-20 rounded-full object-cover ring-4 ring-white/5"
+                                                        />
+                                                        {uploadProgress !== null && (
+                                                            <div className="absolute inset-0 rounded-full bg-zinc-950/70 flex items-center justify-center">
+                                                                <span className="text-xs font-bold text-brand-gold">{uploadProgress}%</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex gap-3">
+                                                        <button
+                                                            onClick={() => document.getElementById("photo-upload-input")?.click()}
+                                                            disabled={uploadProgress !== null}
+                                                            className="px-4 py-2 rounded text-xs font-bold uppercase tracking-wider bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-50"
+                                                        >
+                                                            {uploadProgress !== null ? `Uploading ${uploadProgress}%` : "Upload New"}
+                                                        </button>
+                                                        {photoUrl && (
+                                                            <button
+                                                                onClick={() => { setPhotoUrl(""); updateUserProfile({ id: userId!, firstName, lastName, headline, bio, website, twitterUrl, instagramUrl, linkedinUrl, photoUrl: "" }); }}
+                                                                className="px-4 py-2 rounded text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-white/5 transition-colors"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="pt-6 border-t border-white/5 space-y-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                            First Name
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={firstName}
+                                                            onChange={(e) => setFirstName(e.target.value)}
+                                                            className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                            Last Name
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={lastName}
+                                                            onChange={(e) => setLastName(e.target.value)}
+                                                            className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                        Professional Headline
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={headline}
+                                                        onChange={(e) => setHeadline(e.target.value)}
+                                                        placeholder="e.g. Award-winning Portrait Photographer"
+                                                        className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                        Bio
+                                                    </label>
+                                                    <textarea
+                                                        rows={4}
+                                                        value={bio}
+                                                        onChange={(e) => setBio(e.target.value)}
+                                                        placeholder="A brief description for your profile."
+                                                        className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50 resize-none"
+                                                    />
+                                                    <div className="flex justify-between items-center mt-2">
+                                                        <p className="text-zinc-500 text-xs">Brief description for your profile. URLs are hyperlinked.</p>
+                                                        <span className="text-xs text-zinc-500 font-medium">{bio.length} / 500</span>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                        Personal Website
+                                                    </label>
+                                                    <div className="flex bg-zinc-950 border border-white/10 rounded overflow-hidden focus-within:border-brand-gold/50">
+                                                        <span className="flex items-center px-3 bg-white/5 border-r border-white/10 text-zinc-500 text-sm">https://</span>
+                                                        <input
+                                                            type="text"
+                                                            value={website}
+                                                            onChange={(e) => setWebsite(e.target.value)}
+                                                            placeholder="yourwebsite.com"
+                                                            className="w-full bg-transparent px-3 py-2 text-sm text-white focus:outline-none"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-6">
+                                                    <div>
+                                                        <label className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                                                            Twitter / X
+                                                        </label>
+                                                        <input type="text" value={twitterUrl} onChange={(e) => setTwitterUrl(e.target.value)} placeholder="@username" className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"/>
+                                                    </div>
+                                                    <div>
+                                                        <label className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                                                            Instagram
+                                                        </label>
+                                                        <input type="text" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)} placeholder="@username" className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"/>
+                                                    </div>
+                                                    <div>
+                                                        <label className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                                                            LinkedIn
+                                                        </label>
+                                                        <input type="text" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="linkedin.com/in/username" className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {settingsTab === "security" && (
+                                        <div className="p-6 rounded-xl border border-white/5 bg-zinc-900/30 space-y-6 animate-in fade-in duration-300">
+                                            <div>
+                                                <h3 className="text-white font-medium text-sm mb-4">Email Address</h3>
+                                                <div className="flex items-center gap-4">
+                                                    <input type="email" value={profileEmail} disabled className="flex-1 bg-zinc-950 border border-white/5 rounded px-3 py-2 text-sm text-zinc-500 cursor-not-allowed"/>
+                                                </div>
+                                            </div>
+
+                                            <div className="pt-6 border-t border-white/5 space-y-4">
+                                                <h3 className="text-white font-medium text-sm mb-2">Change Password</h3>
+                                                {securityMsg && (
+                                                    <p className={`text-xs px-3 py-2 rounded ${securityMsg.type === "success" ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"}`}>{securityMsg.text}</p>
+                                                )}
+                                                <div>
+                                                    <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">Current Password</label>
+                                                    <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"/>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-zinc-500 uppercase tracking-widest mb-2">New Password</label>
+                                                    <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full bg-zinc-950 border border-white/10 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold/50"/>
+                                                </div>
+                                                <button onClick={handleChangePassword} disabled={securitySaving || !currentPassword || !newPassword} className="flex items-center gap-2 px-4 py-2 mt-2 rounded text-xs font-bold uppercase tracking-wider bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-50">
+                                                    {securitySaving ? <Loader2 size={14} className="animate-spin"/> : null} Update Password
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {settingsTab === "notifications" && (
+                                        <div className="p-6 rounded-xl border border-white/5 bg-zinc-900/30 space-y-6 animate-in fade-in duration-300">
+                                            <h3 className="text-white font-medium text-sm mb-2">Email Notifications</h3>
+                                            <div className="space-y-4">
+                                                <div className="flex items-start justify-between">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-white">Course Enrollments</p>
+                                                        <p className="text-xs text-zinc-500 mt-0.5">Get notified when a new student enrolls in your courses.</p>
+                                                    </div>
+                                                    <div className="relative inline-block w-10 h-5 align-middle select-none">
+                                                        <input type="checkbox" id="n1" checked={notifyEnrollments} onChange={(e) => setNotifyEnrollments(e.target.checked)} className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand-gold transition-all duration-300 right-5 border-zinc-500"/>
+                                                        <label htmlFor="n1" className="toggle-label block overflow-hidden h-5 rounded-full bg-zinc-700 cursor-pointer"></label>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start justify-between pt-4 border-t border-white/5">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-white">Student Questions</p>
+                                                        <p className="text-xs text-zinc-500 mt-0.5">Receive emails when students ask questions in the Q&A.</p>
+                                                    </div>
+                                                    <div className="relative inline-block w-10 h-5 align-middle select-none">
+                                                        <input type="checkbox" id="n2" checked={notifyQuestions} onChange={(e) => setNotifyQuestions(e.target.checked)} className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand-gold transition-all duration-300 right-5 border-zinc-500"/>
+                                                        <label htmlFor="n2" className="toggle-label block overflow-hidden h-5 rounded-full bg-zinc-700 cursor-pointer"></label>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-start justify-between pt-4 border-t border-white/5">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-white">Marketing & Updates</p>
+                                                        <p className="text-xs text-zinc-500 mt-0.5">Receive news about product updates and creator tips.</p>
+                                                    </div>
+                                                    <div className="relative inline-block w-10 h-5 align-middle select-none">
+                                                        <input type="checkbox" id="n3" checked={notifyMarketing} onChange={(e) => setNotifyMarketing(e.target.checked)} className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:border-brand-gold transition-all duration-300 right-5 border-zinc-500"/>
+                                                        <label htmlFor="n3" className="toggle-label block overflow-hidden h-5 rounded-full bg-zinc-700 cursor-pointer"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Sidebar Info */}
+                                <div className="lg:col-span-1 space-y-6">
+                                    <div className="p-6 rounded-xl border border-white/5 bg-zinc-900/30">
+                                        <h3 className="text-white font-medium text-sm mb-3">Your Account</h3>
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-zinc-500">Plan</span>
+                                                <span className="text-white font-medium">Creator Pro</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-zinc-500">Joined</span>
+                                                <span className="text-white">{joinedDate || "—"}</span>
+                                            </div>
+                                            <div className="pt-4 mt-4 border-t border-white/5">
+                                                <button className="text-xs text-brand-gold hover:text-white transition-colors font-medium">
+                                                    Upgrade Plan
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 rounded-xl border border-red-500/10 bg-red-500/5">
+                                        <h3 className="text-red-400 font-medium text-sm mb-2">Danger Zone</h3>
+                                        <p className="text-xs text-zinc-500 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                                        <button className="px-4 py-2 w-full rounded border border-red-500/20 text-xs font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/10 transition-colors">
+                                            Delete Account
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </main>
 
@@ -1128,6 +1553,7 @@ export default function AdminPage() {
                             </div>
                         </div>
                 </div>
+
             </div>
         </div>
     );

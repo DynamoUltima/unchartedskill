@@ -31,3 +31,107 @@ mutation DeleteReview($movieId: UUID!) @auth(level: USER) {
   # The "auth.uid" server value ensures that users can only delete their own reviews.
   review_delete(key: { userId_expr: "auth.uid", movieId: $movieId })
 }
+
+mutation CreateCategory($name: String!, $slug: String!, $imageUrl: String, $parentId: UUID) @auth(level: USER) {
+  category_insert(data: { name: $name, slug: $slug, imageUrl: $imageUrl, parentId: $parentId })
+}
+
+mutation UpdateCategory($id: UUID!, $name: String, $slug: String, $imageUrl: String, $parentId: UUID) @auth(level: USER) {
+  category_update(id: $id, data: { name: $name, slug: $slug, imageUrl: $imageUrl, parentId: $parentId })
+}
+
+mutation DeleteCategory($id: UUID!) @auth(level: USER) {
+  category_delete(id: $id)
+}
+
+mutation CreateCourse(
+  $title: String!, 
+  $description: String, 
+  $promoVideoVimeoId: String, 
+  $price: Float!, 
+  $discountPrice: Float, 
+  $visibilityStatus: String!, 
+  $instructorId: UUID!, 
+  $categoryId: UUID!
+) @auth(level: USER) {
+  course_insert(data: {
+    title: $title,
+    description: $description,
+    promoVideoVimeoId: $promoVideoVimeoId,
+    price: $price,
+    discountPrice: $discountPrice,
+    visibilityStatus: $visibilityStatus,
+    instructorId: $instructorId,
+    categoryId: $categoryId
+  })
+}
+
+mutation CreateCourseModule(
+  $courseId: UUID!,
+  $title: String!,
+  $orderIndex: Int!
+) @auth(level: USER) {
+  courseModule_insert(data: {
+    courseId: $courseId,
+    title: $title,
+    orderIndex: $orderIndex
+  })
+}
+
+mutation CreateCourseLesson(
+  $moduleId: UUID!,
+  $title: String!,
+  $orderIndex: Int!,
+  $type: String!,
+  $isFree: Boolean!,
+  $vimeoId: String,
+  $content: String
+) @auth(level: USER) {
+  courseLesson_insert(data: {
+    moduleId: $moduleId,
+    title: $title,
+    orderIndex: $orderIndex,
+    type: $type,
+    isFree: $isFree,
+    vimeoId: $vimeoId,
+    content: $content
+  })
+}
+
+mutation UpdateUserProfile(
+  $id: UUID!,
+  $firstName: String!,
+  $lastName: String!,
+  $headline: String,
+  $bio: String,
+  $website: String,
+  $twitterUrl: String,
+  $instagramUrl: String,
+  $linkedinUrl: String,
+  $photoUrl: String
+) @auth(level: USER) {
+  user_update(key: { id: $id }, data: {
+    firstName: $firstName,
+    lastName: $lastName,
+    headline: $headline,
+    bio: $bio,
+    website: $website,
+    twitterUrl: $twitterUrl,
+    instagramUrl: $instagramUrl,
+    linkedinUrl: $linkedinUrl,
+    photoUrl: $photoUrl
+  })
+}
+
+mutation UpdateUserNotifications(
+  $id: UUID!,
+  $notifyEnrollments: Boolean!,
+  $notifyQuestions: Boolean!,
+  $notifyMarketing: Boolean!
+) @auth(level: USER) {
+  user_update(key: { id: $id }, data: {
+    notifyEnrollments: $notifyEnrollments,
+    notifyQuestions: $notifyQuestions,
+    notifyMarketing: $notifyMarketing
+  })
+}

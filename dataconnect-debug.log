@@ -1,0 +1,91 @@
+I0415 16:58:01.476255   16025 load.go:31] Reloading schema and connectors...
+I0415 16:58:01.486374   16025 control.go:100] [projects/emulator/locations/emulator/services/unchartedskill-fe3f9-service ddf9] UpdateResources(): done
+Main schema: sources: schema/schema.gql [2417B] 
+Connector "example": sources: example/mutations.gql [3030B] example/queries.gql [2638B] 
+I0415 16:58:01.497330   16025 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+I0415 16:58:01.505928   16025 collector.go:107] schema extensions wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/dataconnect/.dataconnect/schema"
+Generated sources: main/query.gql [6248B] prelude.gql [82799B] main/mutation.gql [16869B] main/implicit.gql [1259B] main/input.gql [43161B] main/relation.gql [20618B] 
+I0415 16:58:01.507708   16025 collector.go:107] connector "example" javascriptSdk wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+Generated sources: esm/index.esm.js [9526B] index.cjs.js [10524B] react/index.d.ts [7738B] react/index.cjs.js [6425B] react/README.md [85147B] .guides/config.json [236B] index.d.ts [16147B] esm/package.json [17B] README.md [77505B] react/esm/package.json [17B] .guides/usage.md [4212B] react/esm/index.esm.js [6081B] .guides/setup.md [1682B] package.json [853B] react/package.json [460B] 
+I0415 16:58:01.508806   16025 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0415 16:58:01.508907   16025 load.go:109] Finished reloading
+I0415 16:58:01.509595   16025 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I0415 16:58:01.509651   16025 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
+I0415 16:58:04.425733   16025 migrate.go:24] Running migration SQL:
+Step 1: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+Step 2: CREATE TABLE "public"."category" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" timestamptz NOT NULL, "image_url" character varying(500) NULL, "name" character varying(100) NOT NULL, "parent_id" uuid NULL, "slug" character varying(120) NOT NULL, PRIMARY KEY ("id"))
+Step 3: CREATE UNIQUE INDEX "category_slug_uidx" ON "public"."category" ("slug")
+Step 4: CREATE TABLE "public"."movie" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "genre" text NULL, "image_url" text NOT NULL, "title" text NOT NULL, PRIMARY KEY ("id"))
+Step 5: CREATE TABLE "public"."user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "auth_uid" text NOT NULL, "avatar_url" character varying(500) NULL, "bio" text NULL, "created_at" timestamptz NOT NULL, "email" character varying(255) NOT NULL, "first_name" character varying(50) NOT NULL, "last_name" character varying(50) NOT NULL, "role" character varying(20) NOT NULL, "status" character varying(20) NOT NULL, PRIMARY KEY ("id"))
+Step 6: CREATE UNIQUE INDEX "user_authUid_uidx" ON "public"."user" ("auth_uid")
+Step 7: CREATE TABLE "public"."Reviews" ("movie_id" uuid NOT NULL, "user_id" uuid NOT NULL, "rating" integer NULL, "review_date" date NOT NULL, "review_text" text NULL, PRIMARY KEY ("movie_id", "user_id"), CONSTRAINT "Reviews_movie_id_fkey" FOREIGN KEY ("movie_id") REFERENCES "public"."movie" ("id") ON DELETE CASCADE, CONSTRAINT "Reviews_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
+Step 8: CREATE INDEX "Reviews_movieId_idx" ON "public"."Reviews" ("movie_id")
+Step 9: CREATE INDEX "Reviews_userId_idx" ON "public"."Reviews" ("user_id")
+Step 10: CREATE TABLE "public"."movie_metadata" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "movie_id" uuid NOT NULL, "description" text NULL, "rating" double precision NULL, "release_year" integer NULL, PRIMARY KEY ("id"), CONSTRAINT "movie_metadata_movie_id_fkey" FOREIGN KEY ("movie_id") REFERENCES "public"."movie" ("id") ON DELETE CASCADE)
+Step 11: CREATE INDEX "movie_metadata_movieId_idx" ON "public"."movie_metadata" ("movie_id")
+Step 12: CREATE UNIQUE INDEX "movie_metadata_movieId_uidx" ON "public"."movie_metadata" ("movie_id")
+I0415 16:58:04.482042   16025 control.go:100] [projects/emulator/locations/emulator/services/unchartedskill-fe3f9-service dafc] UpdateResources(): done
+Main schema: sources: schema/schema.gql [2417B] 
+Connector "example": sources: example/mutations.gql [3030B] example/queries.gql [2638B] 
+I0415 16:58:04.486719   16025 configure_emulator.go:21] ConfigureEmulator successed
+Request: service_id:  "unchartedskill-fe3f9-service"
+connection_string:  "postgres://127.0.0.1:5432/unchartedskill-fe3f9-database?sslmode=disable"
+database:  "unchartedskill-fe3f9-database"
+
+Response: 
+W0415 17:12:32.361485   16025 engine.go:207] [projects/emulator/locations/emulator/services/unchartedskill-fe3f9-service dafc] ExecuteMutation mutation DeleteCategory: failed with explicit status error: rpc error: code = Unauthenticated desc = unauthenticated: this operation requires a signed-in user. Connector: example
+Auth: public
+
+Variables Set: [id]
+Status: code:16  message:"unauthenticated: this operation requires a signed-in user"
+Errors: [message:"@auth rejected the request"  extensions:{code:UNAUTHENTICATED  debug_details:"@auth(level: USER) requires a signed-in user"}]
+sources: example/queries.gql [2638B] example/mutations.gql [3030B] 
+I0415 17:28:21.615220   16025 load.go:31] Reloading schema and connectors...
+I0415 17:28:21.700458   16025 migrate.go:24] Running migration SQL:
+Step 1: ALTER TABLE "public"."user" DROP COLUMN "avatar_url", DROP COLUMN "bio", DROP COLUMN "created_at", DROP COLUMN "role", DROP COLUMN "status"
+Step 2: DROP TABLE "public"."category"
+I0415 17:28:21.751122   16025 control.go:100] [projects/emulator/locations/emulator/services/unchartedskill-fe3f9-service ec37] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1779B] 
+Connector "example": sources: example/mutations.gql [1313B] example/queries.gql [1847B] 
+I0415 17:28:21.763169   16025 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+I0415 17:28:21.772507   16025 collector.go:107] schema extensions wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/dataconnect/.dataconnect/schema"
+Generated sources: main/mutation.gql [13439B] main/implicit.gql [1259B] main/input.gql [30926B] main/relation.gql [15419B] prelude.gql [82799B] main/query.gql [4979B] 
+I0415 17:28:21.773926   16025 collector.go:107] connector "example" javascriptSdk wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+Generated sources: react/index.d.ts [3961B] react/package.json [460B] react/index.cjs.js [3439B] index.cjs.js [5653B] react/esm/package.json [17B] react/esm/index.esm.js [3269B] react/README.md [48490B] .guides/setup.md [1682B] esm/index.esm.js [5153B] package.json [853B] README.md [41484B] .guides/usage.md [3489B] .guides/config.json [236B] index.d.ts [8483B] esm/package.json [17B] 
+I0415 17:28:21.774505   16025 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0415 17:28:21.774528   16025 load.go:109] Finished reloading
+I0415 18:07:01.668337   16025 load.go:31] Reloading schema and connectors...
+I0415 18:07:01.747979   16025 migrate.go:24] Running migration SQL:
+Step 1: CREATE TABLE "public"."category" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "created_at" timestamptz NOT NULL, "image_url" text NULL, "name" text NOT NULL, "parent_id" uuid NULL, "slug" text NOT NULL, PRIMARY KEY ("id"))
+I0415 18:07:01.793409   16025 control.go:100] [projects/emulator/locations/emulator/services/unchartedskill-fe3f9-service 899c] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1928B] 
+Connector "example": sources: example/mutations.gql [1313B] example/queries.gql [1847B] 
+I0415 18:07:01.811655   16025 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+I0415 18:07:01.821834   16025 collector.go:107] schema extensions wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [82799B] main/relation.gql [18479B] main/query.gql [6248B] main/mutation.gql [16869B] main/implicit.gql [1522B] main/input.gql [38946B] 
+I0415 18:07:01.824085   16025 collector.go:107] connector "example" javascriptSdk wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+Generated sources: react/index.d.ts [3961B] react/esm/index.esm.js [3269B] .guides/usage.md [3489B] .guides/config.json [236B] README.md [41484B] esm/package.json [17B] index.cjs.js [5653B] package.json [853B] react/package.json [460B] react/esm/package.json [17B] index.d.ts [8567B] esm/index.esm.js [5153B] react/index.cjs.js [3439B] react/README.md [48490B] .guides/setup.md [1682B] 
+I0415 18:07:01.829031   16025 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0415 18:07:01.829249   16025 load.go:109] Finished reloading
+I0415 18:07:21.669854   16025 load.go:31] Reloading schema and connectors...
+I0415 18:07:21.740477   16025 control.go:100] [projects/emulator/locations/emulator/services/unchartedskill-fe3f9-service 595c] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1928B] 
+Connector "example": sources: example/mutations.gql [1313B] example/queries.gql [2029B] 
+I0415 18:07:21.750491   16025 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+I0415 18:07:21.755675   16025 collector.go:107] schema extensions wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/dataconnect/.dataconnect/schema"
+Generated sources: main/input.gql [38946B] main/relation.gql [18479B] main/query.gql [6248B] main/mutation.gql [16869B] prelude.gql [82799B] main/implicit.gql [1522B] 
+I0415 18:07:21.756887   16025 collector.go:107] connector "example" javascriptSdk wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+Generated sources: .guides/usage.md [3684B] .guides/setup.md [1682B] .guides/config.json [236B] esm/package.json [17B] react/package.json [460B] react/index.cjs.js [3772B] index.cjs.js [6283B] package.json [853B] README.md [44943B] react/README.md [51963B] esm/index.esm.js [5723B] react/index.d.ts [4301B] react/esm/index.esm.js [3581B] index.d.ts [9378B] react/esm/package.json [17B] 
+I0415 18:07:21.757675   16025 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0415 18:07:21.757689   16025 load.go:109] Finished reloading
+I0415 18:07:41.671314   16025 load.go:31] Reloading schema and connectors...
+I0415 18:07:41.761291   16025 control.go:100] [projects/emulator/locations/emulator/services/unchartedskill-fe3f9-service d0bb] UpdateResources(): done
+Main schema: sources: schema/schema.gql [1928B] 
+Connector "example": sources: example/queries.gql [2029B] example/mutations.gql [1843B] 
+I0415 18:07:41.770130   16025 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+I0415 18:07:41.777021   16025 collector.go:107] schema extensions wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [82799B] main/implicit.gql [1522B] main/input.gql [38946B] main/relation.gql [18479B] main/query.gql [6248B] main/mutation.gql [16869B] 
+I0415 18:07:41.778213   16025 collector.go:107] connector "example" javascriptSdk wrote into "/Users/dynamo/Desktop/Dev/react/uncharted/src/dataconnect-generated"
+Generated sources: index.d.ts [12108B] esm/package.json [17B] react/index.d.ts [5756B] react/index.cjs.js [4888B] react/README.md [66318B] README.md [58778B] react/package.json [460B] react/esm/package.json [17B] .guides/usage.md [3826B] .guides/config.json [236B] esm/index.esm.js [7292B] package.json [853B] index.cjs.js [8032B] react/esm/index.esm.js [4634B] .guides/setup.md [1682B] 
+I0415 18:07:41.779456   16025 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0415 18:07:41.779461   16025 load.go:109] Finished reloading

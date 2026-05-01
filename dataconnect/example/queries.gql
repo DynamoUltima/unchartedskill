@@ -17,6 +17,8 @@ query ListUsers @auth(level: NO_ACCESS) {
     id
     firstName
     lastName
+    email
+    authUid
   }
 }
 
@@ -77,5 +79,46 @@ query SearchMovie($titleInput: String, $genre: String) @auth(level: PUBLIC, inse
     title
     genre
     imageUrl
+  }
+}
+
+query ListCategories @auth(level: PUBLIC, insecureReason: "Anyone can list all categories.") {
+  categories {
+    id
+    name
+    slug
+    imageUrl
+    parentId
+    createdAt
+  }
+}
+
+query ListCourses @auth(level: PUBLIC, insecureReason: "Anyone can list courses.") {
+  courses(orderBy: { createdAt: DESC }) {
+    id
+    title
+    visibilityStatus
+    instructor { id firstName lastName }
+    category { id name }
+  }
+}
+
+query GetCurrentUser($authUid: String!) @auth(level: USER) {
+  users(where: { authUid: { eq: $authUid } }, limit: 1) {
+    id
+    firstName
+    lastName
+    email
+    headline
+    bio
+    website
+    twitterUrl
+    instagramUrl
+    linkedinUrl
+    photoUrl
+    notifyEnrollments
+    notifyQuestions
+    notifyMarketing
+    createdAt
   }
 }

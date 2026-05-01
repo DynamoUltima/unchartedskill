@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
     onAuthStateChanged,
     User,
@@ -28,6 +28,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const popupInProgress = useRef(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,11 +40,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const signInWithGoogle = async () => {
+        // Prevent concurrent popup requests (causes auth/cancelled-popup-request)
+        if (popupInProgress.current) return;
+        popupInProgress.current = true;
         try {
             const result = await signInWithPopup(auth, googleProvider);
             console.log("Successfully logged in with Google:", result.user);
-        } catch (error) {
+        } catch (error: any) {
+            // Firebase cancels a previous popup when a new one opens — not a real error
+            if (error?.code === 'auth/cancelled-popup-request') return;
             console.error("Error signing in with Google", error);
+            throw error;
+        } finally {
+            popupInProgress.current = false;
         }
     };
 

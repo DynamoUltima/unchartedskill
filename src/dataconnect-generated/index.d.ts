@@ -20,6 +20,76 @@ export interface AddReviewVariables {
   reviewText: string;
 }
 
+export interface Category_Key {
+  id: UUIDString;
+  __typename?: 'Category_Key';
+}
+
+export interface CourseLesson_Key {
+  id: UUIDString;
+  __typename?: 'CourseLesson_Key';
+}
+
+export interface CourseModule_Key {
+  id: UUIDString;
+  __typename?: 'CourseModule_Key';
+}
+
+export interface Course_Key {
+  id: UUIDString;
+  __typename?: 'Course_Key';
+}
+
+export interface CreateCategoryData {
+  category_insert: Category_Key;
+}
+
+export interface CreateCategoryVariables {
+  name: string;
+  slug: string;
+  imageUrl?: string | null;
+  parentId?: UUIDString | null;
+}
+
+export interface CreateCourseData {
+  course_insert: Course_Key;
+}
+
+export interface CreateCourseLessonData {
+  courseLesson_insert: CourseLesson_Key;
+}
+
+export interface CreateCourseLessonVariables {
+  moduleId: UUIDString;
+  title: string;
+  orderIndex: number;
+  type: string;
+  isFree: boolean;
+  vimeoId?: string | null;
+  content?: string | null;
+}
+
+export interface CreateCourseModuleData {
+  courseModule_insert: CourseModule_Key;
+}
+
+export interface CreateCourseModuleVariables {
+  courseId: UUIDString;
+  title: string;
+  orderIndex: number;
+}
+
+export interface CreateCourseVariables {
+  title: string;
+  description?: string | null;
+  promoVideoVimeoId?: string | null;
+  price: number;
+  discountPrice?: number | null;
+  visibilityStatus: string;
+  instructorId: UUIDString;
+  categoryId: UUIDString;
+}
+
 export interface CreateMovieData {
   movie_insert: Movie_Key;
 }
@@ -30,12 +100,44 @@ export interface CreateMovieVariables {
   imageUrl: string;
 }
 
+export interface DeleteCategoryData {
+  category_delete?: Category_Key | null;
+}
+
+export interface DeleteCategoryVariables {
+  id: UUIDString;
+}
+
 export interface DeleteReviewData {
   review_delete?: Review_Key | null;
 }
 
 export interface DeleteReviewVariables {
   movieId: UUIDString;
+}
+
+export interface GetCurrentUserData {
+  users: ({
+    id: UUIDString;
+    firstName: string;
+    lastName: string;
+    email: string;
+    headline?: string | null;
+    bio?: string | null;
+    website?: string | null;
+    twitterUrl?: string | null;
+    instagramUrl?: string | null;
+    linkedinUrl?: string | null;
+    photoUrl?: string | null;
+    notifyEnrollments: boolean;
+    notifyQuestions: boolean;
+    notifyMarketing: boolean;
+    createdAt?: TimestampString | null;
+  } & User_Key)[];
+}
+
+export interface GetCurrentUserVariables {
+  authUid: string;
 }
 
 export interface GetMovieByIdData {
@@ -64,6 +166,34 @@ export interface GetMovieByIdData {
 
 export interface GetMovieByIdVariables {
   id: UUIDString;
+}
+
+export interface ListCategoriesData {
+  categories: ({
+    id: UUIDString;
+    name: string;
+    slug: string;
+    imageUrl?: string | null;
+    parentId?: UUIDString | null;
+    createdAt: TimestampString;
+  } & Category_Key)[];
+}
+
+export interface ListCoursesData {
+  courses: ({
+    id: UUIDString;
+    title: string;
+    visibilityStatus: string;
+    instructor: {
+      id: UUIDString;
+      firstName: string;
+      lastName: string;
+    } & User_Key;
+      category: {
+        id: UUIDString;
+        name: string;
+      } & Category_Key;
+  } & Course_Key)[];
 }
 
 export interface ListMoviesData {
@@ -97,6 +227,8 @@ export interface ListUsersData {
     id: UUIDString;
     firstName: string;
     lastName: string;
+    email: string;
+    authUid: string;
   } & User_Key)[];
 }
 
@@ -128,6 +260,46 @@ export interface SearchMovieData {
 export interface SearchMovieVariables {
   titleInput?: string | null;
   genre?: string | null;
+}
+
+export interface UpdateCategoryData {
+  category_update?: Category_Key | null;
+}
+
+export interface UpdateCategoryVariables {
+  id: UUIDString;
+  name?: string | null;
+  slug?: string | null;
+  imageUrl?: string | null;
+  parentId?: UUIDString | null;
+}
+
+export interface UpdateUserNotificationsData {
+  user_update?: User_Key | null;
+}
+
+export interface UpdateUserNotificationsVariables {
+  id: UUIDString;
+  notifyEnrollments: boolean;
+  notifyQuestions: boolean;
+  notifyMarketing: boolean;
+}
+
+export interface UpdateUserProfileData {
+  user_update?: User_Key | null;
+}
+
+export interface UpdateUserProfileVariables {
+  id: UUIDString;
+  firstName: string;
+  lastName: string;
+  headline?: string | null;
+  bio?: string | null;
+  website?: string | null;
+  twitterUrl?: string | null;
+  instagramUrl?: string | null;
+  linkedinUrl?: string | null;
+  photoUrl?: string | null;
 }
 
 export interface UpsertUserData {
@@ -193,6 +365,102 @@ export const deleteReviewRef: DeleteReviewRef;
 export function deleteReview(vars: DeleteReviewVariables): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
 export function deleteReview(dc: DataConnect, vars: DeleteReviewVariables): MutationPromise<DeleteReviewData, DeleteReviewVariables>;
 
+interface CreateCategoryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateCategoryVariables): MutationRef<CreateCategoryData, CreateCategoryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateCategoryVariables): MutationRef<CreateCategoryData, CreateCategoryVariables>;
+  operationName: string;
+}
+export const createCategoryRef: CreateCategoryRef;
+
+export function createCategory(vars: CreateCategoryVariables): MutationPromise<CreateCategoryData, CreateCategoryVariables>;
+export function createCategory(dc: DataConnect, vars: CreateCategoryVariables): MutationPromise<CreateCategoryData, CreateCategoryVariables>;
+
+interface UpdateCategoryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateCategoryVariables): MutationRef<UpdateCategoryData, UpdateCategoryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateCategoryVariables): MutationRef<UpdateCategoryData, UpdateCategoryVariables>;
+  operationName: string;
+}
+export const updateCategoryRef: UpdateCategoryRef;
+
+export function updateCategory(vars: UpdateCategoryVariables): MutationPromise<UpdateCategoryData, UpdateCategoryVariables>;
+export function updateCategory(dc: DataConnect, vars: UpdateCategoryVariables): MutationPromise<UpdateCategoryData, UpdateCategoryVariables>;
+
+interface DeleteCategoryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteCategoryVariables): MutationRef<DeleteCategoryData, DeleteCategoryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteCategoryVariables): MutationRef<DeleteCategoryData, DeleteCategoryVariables>;
+  operationName: string;
+}
+export const deleteCategoryRef: DeleteCategoryRef;
+
+export function deleteCategory(vars: DeleteCategoryVariables): MutationPromise<DeleteCategoryData, DeleteCategoryVariables>;
+export function deleteCategory(dc: DataConnect, vars: DeleteCategoryVariables): MutationPromise<DeleteCategoryData, DeleteCategoryVariables>;
+
+interface CreateCourseRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateCourseVariables): MutationRef<CreateCourseData, CreateCourseVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateCourseVariables): MutationRef<CreateCourseData, CreateCourseVariables>;
+  operationName: string;
+}
+export const createCourseRef: CreateCourseRef;
+
+export function createCourse(vars: CreateCourseVariables): MutationPromise<CreateCourseData, CreateCourseVariables>;
+export function createCourse(dc: DataConnect, vars: CreateCourseVariables): MutationPromise<CreateCourseData, CreateCourseVariables>;
+
+interface CreateCourseModuleRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateCourseModuleVariables): MutationRef<CreateCourseModuleData, CreateCourseModuleVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateCourseModuleVariables): MutationRef<CreateCourseModuleData, CreateCourseModuleVariables>;
+  operationName: string;
+}
+export const createCourseModuleRef: CreateCourseModuleRef;
+
+export function createCourseModule(vars: CreateCourseModuleVariables): MutationPromise<CreateCourseModuleData, CreateCourseModuleVariables>;
+export function createCourseModule(dc: DataConnect, vars: CreateCourseModuleVariables): MutationPromise<CreateCourseModuleData, CreateCourseModuleVariables>;
+
+interface CreateCourseLessonRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateCourseLessonVariables): MutationRef<CreateCourseLessonData, CreateCourseLessonVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateCourseLessonVariables): MutationRef<CreateCourseLessonData, CreateCourseLessonVariables>;
+  operationName: string;
+}
+export const createCourseLessonRef: CreateCourseLessonRef;
+
+export function createCourseLesson(vars: CreateCourseLessonVariables): MutationPromise<CreateCourseLessonData, CreateCourseLessonVariables>;
+export function createCourseLesson(dc: DataConnect, vars: CreateCourseLessonVariables): MutationPromise<CreateCourseLessonData, CreateCourseLessonVariables>;
+
+interface UpdateUserProfileRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateUserProfileVariables): MutationRef<UpdateUserProfileData, UpdateUserProfileVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateUserProfileVariables): MutationRef<UpdateUserProfileData, UpdateUserProfileVariables>;
+  operationName: string;
+}
+export const updateUserProfileRef: UpdateUserProfileRef;
+
+export function updateUserProfile(vars: UpdateUserProfileVariables): MutationPromise<UpdateUserProfileData, UpdateUserProfileVariables>;
+export function updateUserProfile(dc: DataConnect, vars: UpdateUserProfileVariables): MutationPromise<UpdateUserProfileData, UpdateUserProfileVariables>;
+
+interface UpdateUserNotificationsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateUserNotificationsVariables): MutationRef<UpdateUserNotificationsData, UpdateUserNotificationsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateUserNotificationsVariables): MutationRef<UpdateUserNotificationsData, UpdateUserNotificationsVariables>;
+  operationName: string;
+}
+export const updateUserNotificationsRef: UpdateUserNotificationsRef;
+
+export function updateUserNotifications(vars: UpdateUserNotificationsVariables): MutationPromise<UpdateUserNotificationsData, UpdateUserNotificationsVariables>;
+export function updateUserNotifications(dc: DataConnect, vars: UpdateUserNotificationsVariables): MutationPromise<UpdateUserNotificationsData, UpdateUserNotificationsVariables>;
+
 interface ListMoviesRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<ListMoviesData, undefined>;
@@ -252,4 +520,40 @@ export const searchMovieRef: SearchMovieRef;
 
 export function searchMovie(vars?: SearchMovieVariables, options?: ExecuteQueryOptions): QueryPromise<SearchMovieData, SearchMovieVariables>;
 export function searchMovie(dc: DataConnect, vars?: SearchMovieVariables, options?: ExecuteQueryOptions): QueryPromise<SearchMovieData, SearchMovieVariables>;
+
+interface ListCategoriesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListCategoriesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListCategoriesData, undefined>;
+  operationName: string;
+}
+export const listCategoriesRef: ListCategoriesRef;
+
+export function listCategories(options?: ExecuteQueryOptions): QueryPromise<ListCategoriesData, undefined>;
+export function listCategories(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListCategoriesData, undefined>;
+
+interface ListCoursesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListCoursesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListCoursesData, undefined>;
+  operationName: string;
+}
+export const listCoursesRef: ListCoursesRef;
+
+export function listCourses(options?: ExecuteQueryOptions): QueryPromise<ListCoursesData, undefined>;
+export function listCourses(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListCoursesData, undefined>;
+
+interface GetCurrentUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetCurrentUserVariables): QueryRef<GetCurrentUserData, GetCurrentUserVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetCurrentUserVariables): QueryRef<GetCurrentUserData, GetCurrentUserVariables>;
+  operationName: string;
+}
+export const getCurrentUserRef: GetCurrentUserRef;
+
+export function getCurrentUser(vars: GetCurrentUserVariables, options?: ExecuteQueryOptions): QueryPromise<GetCurrentUserData, GetCurrentUserVariables>;
+export function getCurrentUser(dc: DataConnect, vars: GetCurrentUserVariables, options?: ExecuteQueryOptions): QueryPromise<GetCurrentUserData, GetCurrentUserVariables>;
 

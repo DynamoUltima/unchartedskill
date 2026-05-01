@@ -1,5 +1,41 @@
 extend type Mutation {
   """
+  ✨ Insert a single `Category` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  category_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Category_Data!
+  ): Category_KeyOutput! @fdc_generated(from: "Category", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Course` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  course_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Course_Data!
+  ): Course_KeyOutput! @fdc_generated(from: "Course", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `CourseLesson` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  courseLesson_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: CourseLesson_Data!
+  ): CourseLesson_KeyOutput! @fdc_generated(from: "CourseLesson", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `CourseModule` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  courseModule_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: CourseModule_Data!
+  ): CourseModule_KeyOutput! @fdc_generated(from: "CourseModule", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Movie` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   movie_insert(
@@ -35,6 +71,42 @@ extend type Mutation {
     """
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `Category` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  category_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Category_Data!]!
+  ): [Category_KeyOutput!]! @fdc_generated(from: "Category", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Course` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  course_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Course_Data!]!
+  ): [Course_KeyOutput!]! @fdc_generated(from: "Course", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `CourseLesson` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  courseLesson_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [CourseLesson_Data!]!
+  ): [CourseLesson_KeyOutput!]! @fdc_generated(from: "CourseLesson", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `CourseModule` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  courseModule_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [CourseModule_Data!]!
+  ): [CourseModule_KeyOutput!]! @fdc_generated(from: "CourseModule", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Movie` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -72,6 +144,42 @@ extend type Mutation {
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert or update a single `Category` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Category`.
+  """
+  category_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Category_Data!
+  ): Category_KeyOutput! @fdc_generated(from: "Category", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Course` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Course`.
+  """
+  course_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Course_Data!
+  ): Course_KeyOutput! @fdc_generated(from: "Course", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `CourseLesson` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `CourseLesson`.
+  """
+  courseLesson_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: CourseLesson_Data!
+  ): CourseLesson_KeyOutput! @fdc_generated(from: "CourseLesson", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `CourseModule` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `CourseModule`.
+  """
+  courseModule_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: CourseModule_Data!
+  ): CourseModule_KeyOutput! @fdc_generated(from: "CourseModule", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Movie` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Movie`.
   """
   movie_upsert(
@@ -108,6 +216,42 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update `Category` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Category`.
+  """
+  category_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Category_Data!]!
+  ): [Category_KeyOutput!]! @fdc_generated(from: "Category", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Course` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Course`.
+  """
+  course_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Course_Data!]!
+  ): [Course_KeyOutput!]! @fdc_generated(from: "Course", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `CourseLesson` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `CourseLesson`.
+  """
+  courseLesson_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [CourseLesson_Data!]!
+  ): [CourseLesson_KeyOutput!]! @fdc_generated(from: "CourseLesson", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `CourseModule` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `CourseModule`.
+  """
+  courseModule_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [CourseModule_Data!]!
+  ): [CourseModule_KeyOutput!]! @fdc_generated(from: "CourseModule", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `Movie` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Movie`.
   """
   movie_upsertMany(
@@ -143,6 +287,102 @@ extend type Mutation {
     """
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `Category` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Category` or `null` if not found.
+  """
+  category_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Category_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Category_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Category_Data!
+  ): Category_KeyOutput @fdc_generated(from: "Category", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Course` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Course` or `null` if not found.
+  """
+  course_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Course_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Course_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Course_Data!
+  ): Course_KeyOutput @fdc_generated(from: "Course", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `CourseLesson` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `CourseLesson` or `null` if not found.
+  """
+  courseLesson_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: CourseLesson_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: CourseLesson_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: CourseLesson_Data!
+  ): CourseLesson_KeyOutput @fdc_generated(from: "CourseLesson", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `CourseModule` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `CourseModule` or `null` if not found.
+  """
+  courseModule_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: CourseModule_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: CourseModule_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: CourseModule_Data!
+  ): CourseModule_KeyOutput @fdc_generated(from: "CourseModule", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Movie` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Movie` or `null` if not found.
   """
@@ -235,6 +475,82 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
   """
+  ✨ Update `Category` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  category_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Category_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Category_Data!
+  ): Int! @fdc_generated(from: "Category", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Course` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  course_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Course_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Course_Data!
+  ): Int! @fdc_generated(from: "Course", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `CourseLesson` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  courseLesson_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: CourseLesson_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: CourseLesson_Data!
+  ): Int! @fdc_generated(from: "CourseLesson", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `CourseModule` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  courseModule_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: CourseModule_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: CourseModule_Data!
+  ): Int! @fdc_generated(from: "CourseModule", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Movie` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   movie_updateMany(
@@ -311,6 +627,82 @@ extend type Mutation {
     data: User_Data!
   ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Delete a single `Category` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  category_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Category_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Category_FirstRow
+  ): Category_KeyOutput @fdc_generated(from: "Category", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Course` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  course_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Course_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Course_FirstRow
+  ): Course_KeyOutput @fdc_generated(from: "Course", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `CourseLesson` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  courseLesson_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: CourseLesson_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: CourseLesson_FirstRow
+  ): CourseLesson_KeyOutput @fdc_generated(from: "CourseLesson", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `CourseModule` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  courseModule_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: CourseModule_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: CourseModule_FirstRow
+  ): CourseModule_KeyOutput @fdc_generated(from: "CourseModule", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Movie` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   movie_delete(
@@ -381,6 +773,62 @@ extend type Mutation {
     """
     first: User_FirstRow
   ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `Category` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  category_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Category_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Category", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Course` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  course_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Course_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Course", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `CourseLesson` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  courseLesson_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: CourseLesson_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "CourseLesson", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `CourseModule` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  courseModule_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: CourseModule_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "CourseModule", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Movie` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

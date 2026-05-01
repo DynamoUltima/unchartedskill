@@ -1,3 +1,43 @@
+extend type Category {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Category", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type Course {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Course", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Course`.`category`. It must match the value of `Category`.`id`. See `@ref` for how to customize it.
+  """
+  categoryId: UUID! @fdc_generated(from: "Course.category", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Course`.`instructor`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  instructorId: UUID! @fdc_generated(from: "Course.instructor", purpose: IMPLICIT_REF_FIELD)
+}
+extend type CourseLesson {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "CourseLesson", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `CourseLesson`.`module`. It must match the value of `CourseModule`.`id`. See `@ref` for how to customize it.
+  """
+  moduleId: UUID! @fdc_generated(from: "CourseLesson.module", purpose: IMPLICIT_REF_FIELD)
+}
+extend type CourseModule {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "CourseModule", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `CourseModule`.`course`. It must match the value of `Course`.`id`. See `@ref` for how to customize it.
+  """
+  courseId: UUID! @fdc_generated(from: "CourseModule.course", purpose: IMPLICIT_REF_FIELD)
+}
 extend type Movie {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.

@@ -13,6 +13,7 @@ const firebaseConfig = {
 };
 
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -21,10 +22,13 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+// Initialize Storage
+const storage = getStorage(app);
+
 // Initialize Data Connect
 const dataConnect = getDataConnect(app, connectorConfig);
 
 // Uncomment the following line to connect to the local emulator during development
 // connectDataConnectEmulator(dataConnect, 'localhost', 9399);
 
-export { app, auth, googleProvider, dataConnect };
+export { app, auth, googleProvider, dataConnect, storage };

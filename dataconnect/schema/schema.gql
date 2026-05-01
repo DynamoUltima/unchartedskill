@@ -6,6 +6,20 @@ type User @table {
   lastName: String! @col(dataType: "varchar(50)")
   email: String! @col(dataType: "varchar(255)")
   authUid: String! @unique @default(expr: "auth.uid")
+  role: String @col(dataType: "varchar(50)")
+  status: String @col(dataType: "varchar(50)")
+  avatarUrl: String @col(name: "avatar_url")
+  headline: String @col(dataType: "varchar(255)")
+  bio: String @col(dataType: "text")
+  website: String @col(dataType: "varchar(255)")
+  twitterUrl: String @col(dataType: "varchar(255)")
+  instagramUrl: String @col(dataType: "varchar(255)")
+  linkedinUrl: String @col(dataType: "varchar(255)")
+  photoUrl: String @col(dataType: "varchar(500)")
+  notifyEnrollments: Boolean! @default(value: true)
+  notifyQuestions: Boolean! @default(value: true)
+  notifyMarketing: Boolean! @default(value: false)
+  createdAt: Timestamp @default(expr: "request.time") @col(name: "created_at")
 }
 
 # Movie is keyed by a randomly generated UUID.
@@ -46,4 +60,48 @@ type Review @table(name: "Reviews", key: ["movie", "user"]) {
   rating: Int
   reviewText: String
   reviewDate: Date! @default(expr: "request.time")
+}
+
+type Category @table {
+  name: String!
+  slug: String!
+  imageUrl: String
+  parentId: UUID
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# Course is the top-level entity
+type Course @table {
+  title: String!
+  description: String
+  promoVideoVimeoId: String
+  price: Float! @default(value: 0.0)
+  discountPrice: Float
+  visibilityStatus: String! @default(value: "draft") # 'draft', 'coming_soon', 'live'
+  
+  # Relationships
+  instructor: User!
+  category: Category!
+  
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# A Course has multiple Modules
+type CourseModule @table {
+  course: Course!
+  title: String!
+  orderIndex: Int!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# A Module has multiple Lessons
+type CourseLesson @table {
+  module: CourseModule!
+  title: String!
+  orderIndex: Int!
+  type: String! # 'video', 'article', 'quiz'
+  isFree: Boolean! @default(value: false)
+  vimeoId: String
+  content: String
+  createdAt: Timestamp! @default(expr: "request.time")
 }

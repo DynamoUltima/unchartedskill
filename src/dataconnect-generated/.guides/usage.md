@@ -12,7 +12,7 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useCreateMovie, useUpsertUser, useAddReview, useDeleteReview, useListMovies, useListUsers, useListUserReviews, useGetMovieById, useSearchMovie } from '@dataconnect/generated/react';
+import { useCreateMovie, useUpsertUser, useAddReview, useDeleteReview, useCreateCategory, useUpdateCategory, useDeleteCategory, useCreateCourse, useCreateCourseModule, useCreateCourseLesson } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
 const { data, isPending, isSuccess, isError, error } = useCreateMovie(createMovieVars);
@@ -23,15 +23,17 @@ const { data, isPending, isSuccess, isError, error } = useAddReview(addReviewVar
 
 const { data, isPending, isSuccess, isError, error } = useDeleteReview(deleteReviewVars);
 
-const { data, isPending, isSuccess, isError, error } = useListMovies();
+const { data, isPending, isSuccess, isError, error } = useCreateCategory(createCategoryVars);
 
-const { data, isPending, isSuccess, isError, error } = useListUsers();
+const { data, isPending, isSuccess, isError, error } = useUpdateCategory(updateCategoryVars);
 
-const { data, isPending, isSuccess, isError, error } = useListUserReviews();
+const { data, isPending, isSuccess, isError, error } = useDeleteCategory(deleteCategoryVars);
 
-const { data, isPending, isSuccess, isError, error } = useGetMovieById(getMovieByIdVars);
+const { data, isPending, isSuccess, isError, error } = useCreateCourse(createCourseVars);
 
-const { data, isPending, isSuccess, isError, error } = useSearchMovie(searchMovieVars);
+const { data, isPending, isSuccess, isError, error } = useCreateCourseModule(createCourseModuleVars);
+
+const { data, isPending, isSuccess, isError, error } = useCreateCourseLesson(createCourseLessonVars);
 
 ```
 
@@ -70,7 +72,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createMovie, upsertUser, addReview, deleteReview, listMovies, listUsers, listUserReviews, getMovieById, searchMovie } from '@dataconnect/generated';
+import { createMovie, upsertUser, addReview, deleteReview, createCategory, updateCategory, deleteCategory, createCourse, createCourseModule, createCourseLesson } from '@dataconnect/generated';
 
 
 // Operation CreateMovie:  For variables, look at type CreateMovieVars in ../index.d.ts
@@ -85,20 +87,23 @@ const { data } = await AddReview(dataConnect, addReviewVars);
 // Operation DeleteReview:  For variables, look at type DeleteReviewVars in ../index.d.ts
 const { data } = await DeleteReview(dataConnect, deleteReviewVars);
 
-// Operation ListMovies: 
-const { data } = await ListMovies(dataConnect);
+// Operation CreateCategory:  For variables, look at type CreateCategoryVars in ../index.d.ts
+const { data } = await CreateCategory(dataConnect, createCategoryVars);
 
-// Operation ListUsers: 
-const { data } = await ListUsers(dataConnect);
+// Operation UpdateCategory:  For variables, look at type UpdateCategoryVars in ../index.d.ts
+const { data } = await UpdateCategory(dataConnect, updateCategoryVars);
 
-// Operation ListUserReviews: 
-const { data } = await ListUserReviews(dataConnect);
+// Operation DeleteCategory:  For variables, look at type DeleteCategoryVars in ../index.d.ts
+const { data } = await DeleteCategory(dataConnect, deleteCategoryVars);
 
-// Operation GetMovieById:  For variables, look at type GetMovieByIdVars in ../index.d.ts
-const { data } = await GetMovieById(dataConnect, getMovieByIdVars);
+// Operation CreateCourse:  For variables, look at type CreateCourseVars in ../index.d.ts
+const { data } = await CreateCourse(dataConnect, createCourseVars);
 
-// Operation SearchMovie:  For variables, look at type SearchMovieVars in ../index.d.ts
-const { data } = await SearchMovie(dataConnect, searchMovieVars);
+// Operation CreateCourseModule:  For variables, look at type CreateCourseModuleVars in ../index.d.ts
+const { data } = await CreateCourseModule(dataConnect, createCourseModuleVars);
+
+// Operation CreateCourseLesson:  For variables, look at type CreateCourseLessonVars in ../index.d.ts
+const { data } = await CreateCourseLesson(dataConnect, createCourseLessonVars);
 
 
 ```
